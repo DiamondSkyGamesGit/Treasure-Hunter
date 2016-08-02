@@ -26,6 +26,7 @@ namespace HeroData {
 	    // Use this for initialization
 	    void Start () {
             mySkillsCollection.Add(new AttackSkill("Attack", 20f, 0.5f), "attackSkill");
+            
 	    }
 	
 	    // Update is called once per frame

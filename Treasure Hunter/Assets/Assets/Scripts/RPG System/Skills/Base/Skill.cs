@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace SkillSystem { 
     /// <summary>
     /// The base class for all skills. 
     /// </summary>
     [System.Serializable]
-    public abstract class Skill {
+    public abstract class Skill : ISkill {
 
         //does it need to be a monobehavior?
         //if is monobehavior, can create alot of skill prefabs that are empty game objects that are instantiated
@@ -45,5 +46,29 @@ namespace SkillSystem {
         }
 
         public abstract void UseSkill();
+
+        /// <summary>
+        /// Skill is saved with key as Skill.SkillName
+        /// derived classes should supply themselves
+        /// </summary>
+        public virtual void SaveToSkillDatabase(Skill theSkill)
+        {
+            if(SkillDatabase.Instance != null)
+            {
+                SkillDatabase.Instance.AddSkillToCollection(theSkill.SkillName, theSkill);
+            }
+        }
+
+        /// <summary>
+        /// Skill is saved with string<param name="key"> key</param>
+        /// derived classes should supply themselves
+        /// </summary>
+        public virtual void SaveToSkillDatabase(string key, Skill theSkill)
+        {
+            if(SkillDatabase.Instance != null)
+            {
+                SkillDatabase.Instance.AddSkillToCollection(key, theSkill);
+            }
+        }
     }
 }

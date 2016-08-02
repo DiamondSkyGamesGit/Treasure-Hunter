@@ -101,8 +101,11 @@
     <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Base\PassiveSkill.cs" />
     <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Base\PhysicalSkill.cs" />
     <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Base\Skill.cs" />
+    <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Base\SkillDatabase.cs" />
     <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Interfaces\IPhysicalSkill.cs" />
+    <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Interfaces\ISkill.cs" />
     <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Physical Skills\AttackSkill.cs" />
+    <Compile Include="Assets\Assets\Scripts\RPG System\Skills\Skill Creator\SkillCreator.cs" />
     <Compile Include="Assets\Assets\Scripts\Systems\RPGSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

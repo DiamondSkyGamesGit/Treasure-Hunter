@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using SkillSystem;
 
 namespace HeroData { 
@@ -19,11 +20,12 @@ namespace HeroData {
         //So when player presses Attack, the ActionButton must either have a reference to this class and get the AttackSkill
         //or
         //the attackButton launches an event
-        public AttackSkill attackSkill;
+        public List<Skill> mySkills = new List<Skill>();
+        public Dictionary<Skill, string> mySkillsCollection = new Dictionary<Skill, string>();
 
 	    // Use this for initialization
 	    void Start () {
-            attackSkill = new AttackSkill("Attack", 50f, 1f);
+            mySkillsCollection.Add(new AttackSkill("Attack", 20f, 0.5f), "attackSkill");
 	    }
 	
 	    // Update is called once per frame

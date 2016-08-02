@@ -9,6 +9,8 @@ public abstract class ActionButton : MonoBehaviour, IUIAction {
 
     public Button myButton;
     public LayoutElement myLayoutElement;
+    //add sprite icon
+    //add text shown
 
 
 

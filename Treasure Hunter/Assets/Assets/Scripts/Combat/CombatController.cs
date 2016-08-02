@@ -68,7 +68,7 @@ public class CombatController : MonoBehaviour {
 
     void OnEnable()
     {
-        //PlayerCombatInput.Instance.onClickAttack
+        
     }
 
     void OnDisable()

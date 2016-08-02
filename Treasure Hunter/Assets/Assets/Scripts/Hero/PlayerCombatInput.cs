@@ -42,8 +42,6 @@ public class PlayerCombatInput : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        if (combatCanvas.gameObject.activeSelf)
-            DisablePlayerInput();
 
         CombatController.Instance.onIsPlayersTurn += EnablePlayerInput;
         CombatController.Instance.onCombatActiveEnemies += GetEnemyListFromCallback;

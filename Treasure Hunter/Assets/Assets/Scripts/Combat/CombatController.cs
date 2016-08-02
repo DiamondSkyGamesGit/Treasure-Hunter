@@ -31,7 +31,9 @@ public class CombatController : MonoBehaviour {
     public delegate void OnCombatInitiated();
     public event OnCombatInitiated onCombatInitiated;
 
+    //should the delegate return CombatState or does callback happen as parameter?
     public delegate CombatState OnCombatStateChanged();
+    public event OnCombatStateChanged onCombatStateChanged;
 
     //------------State machine
     public enum CombatState

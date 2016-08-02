@@ -6,6 +6,11 @@ using System.Collections;
 /// Handles control of which UI elements to show for each instance of ScrollableActionList at a given time
 /// listens to relevant combat events
 /// public scripts should be added in inspector
+/// notifies CombatController when player has done Action
+/// OR
+/// listens to combatStateChanged from CombatController event
+/// When onCombatStateChanged.CombatState == PLAYERINPUT..., THEN show relevant UI for that Hero
+/// 
 /// </summary>
 public class CombatUIController : MonoBehaviour {
     

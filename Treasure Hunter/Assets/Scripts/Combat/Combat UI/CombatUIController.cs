@@ -50,11 +50,15 @@ public class CombatUIController : MonoBehaviour {
         switch (battleState)
         {
             case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
-                Debug.Log(GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes).Count);
+                //-- Display scrollableActionList
+                List<Hero> temp = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
+                foreach (var v in temp)
+                    Debug.Log(v.heroName + " " + v.actionBar);
                 break;
         }
     }
 
+    //Unsure if this works, test later with more Heroes
     private List<Hero> GetSortedHeroListByActionBarValue(List<Hero> heroes)
     {
         heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
@@ -62,6 +66,16 @@ public class CombatUIController : MonoBehaviour {
         temp = heroes;
         return temp;
         
+    }
+
+    public void EnablePlayerInputUI()
+    {
+
+    }
+
+    public void DisablePlayerInputUI()
+    {
+
     }
 
     /// <summary>

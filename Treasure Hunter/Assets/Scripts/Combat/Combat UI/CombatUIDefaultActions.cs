@@ -7,9 +7,5 @@ using UnityEngine.UI;
 public class CombatUIDefaultActions : CombatUI {
     
     //holds the possible Buttons to press for each hero as default when entering ScrollableList
-    void Start()
-    {
-        
-    }
 
 }

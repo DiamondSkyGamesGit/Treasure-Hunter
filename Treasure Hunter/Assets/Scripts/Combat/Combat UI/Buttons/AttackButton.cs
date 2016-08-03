@@ -27,15 +27,14 @@ public class AttackButton : ActionButton
     //Added these for safety in the future
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => DoAction());
+        myButton.onClick.AddListener(() => PublishActionButtonClick(this));
     }
 
     protected override void RemoveButtonListener()
     {
         if (myButton.onClick != null)
-            myButton.onClick.RemoveListener(() => DoAction());
+            myButton.onClick.RemoveListener(() => PublishActionButtonClick(this));
     }
-
 
     public override void DoAction()
     {
@@ -46,4 +45,10 @@ public class AttackButton : ActionButton
     {
         throw new NotImplementedException();
     }
+
+    public override void DoAction(ActionButton theActionButton)
+    {
+        
+    }
+
 }

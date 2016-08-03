@@ -47,4 +47,9 @@ public class SelectTargetButton : ActionButton {
     {
         throw new NotImplementedException();
     }
+
+    public override void DoAction(ActionButton theActionButton)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -17,7 +17,7 @@ using HeroData;
 /// When onCombatStateChanged.CombatState == PLAYERINPUT..., THEN show relevant UI for that Hero
 /// 
 /// </summary>
-public class CombatUIController : MonoBehaviour {
+public class CombatUIController : MonoBehaviour, IActionButtonListener {
     
     public ScrollableActionList scrollableActionList;
     public Text activeHeroNameTextObj;
@@ -28,30 +28,71 @@ public class CombatUIController : MonoBehaviour {
 
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
+    //if i am to use activeHero it is very important to update active hero correctly after button listeners have been assigned to the hero's buttons
+    //might not be a good system
+    public Hero activeHero;
 
     public bool showDebugLogs = false;
 
 
-    //----------Mono Methods--------------
-	void Start () {
+    #region --//-- Monobehaviour Methods --\\--
+
+    void Start () {
 	
         
 	}
 
     void OnEnable()
     {
+        //FIX THIS LATER
+        if (activeHero == null)
+            activeHero = GameController.Instance.activeHeroes[0];
+
         CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
+        // will give null ref on start unless battlecanvas is not enabled
+        AddButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
     }
 	
     void OnDisable()
     {
         CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+        RemoveButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
     }
 
 	void Update () {
 	
 	}
+    #endregion
 
+
+    #region --//-- Add & Remove Listeners Methods --\\--
+
+    
+    List<ActionButton> GetActiveHeroDefaultActionButtons(Hero theHero)
+    {
+        return theHero.heroSkills.combatUIDefaultActions.actionButtons;
+    }
+
+    //hopefully it goes correctly to the right hero, not a problem with prefabs or shared vars or something
+    void AddButtonListeners(List<ActionButton> theActionButtons)
+    {
+        foreach(var v in theActionButtons)
+        {
+            v.onActionButtonClick += OnActionButtonClicked;
+        }
+    }
+
+    void RemoveButtonListeners(List<ActionButton> theActionButtons)
+    {
+        foreach(var v in theActionButtons)
+        {
+            v.onActionButtonClick -= OnActionButtonClicked;
+        }
+    }
+
+    #endregion
+
+    #region --//-- On Battle State Changed Methods --\\--
     public void OnBattleStateChanged(CombatController.BattleState battleState)
     {
         switch (battleState)
@@ -60,6 +101,7 @@ public class CombatUIController : MonoBehaviour {
 
                 //-- Get sorted hero list, pos[0] should be one with highest actionBarValue --
                 activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
+                activeHero = activeHeroesSorted[0];
                 if (showDebugLogs) { 
                     foreach (var v in activeHeroesSorted)
                         Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
@@ -86,6 +128,10 @@ public class CombatUIController : MonoBehaviour {
         temp = heroes;
         return temp;
     }
+
+    #endregion
+
+    #region --//-- Input Handling Methods --\\--
 
     /// <summary>
     /// start input at Hero.First or Partyleader for method with no params
@@ -117,6 +163,13 @@ public class CombatUIController : MonoBehaviour {
 
     }
 
+    #endregion
+
+    public void OnActionButtonClicked(ActionButton theButton)
+    {
+        Debug.Log("Got tha message!");
+    }
+
     /// <summary>
     /// Are called when CombatState == 
     /// </summary>
@@ -129,4 +182,6 @@ public class CombatUIController : MonoBehaviour {
     {
         //scrollableActionList.DisplayActions<ActionButton>(combatUITargetSelection.activeEnemies);
     }
+
+
 }

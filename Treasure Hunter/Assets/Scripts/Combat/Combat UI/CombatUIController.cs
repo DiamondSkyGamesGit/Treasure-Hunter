@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using UnityEngine.UI;
 using HeroData;
 
 
@@ -19,9 +20,10 @@ using HeroData;
 public class CombatUIController : MonoBehaviour {
     
     public ScrollableActionList scrollableActionList;
+    public Text activeHeroNameTextObj;
     public ActionButton defaultEnemyActionButton;
 
-    public CombatUIOffensiveActions combatUIOffensiveActions;
+    public CombatUIDefaultActions combatUIDefaultActions;
     public CombatUiTargetSelection combatUITargetSelection;
 
     //the sorted list on who has highest actionBarvalue
@@ -55,15 +57,17 @@ public class CombatUIController : MonoBehaviour {
         switch (battleState)
         {
             case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
-                //-- Display scrollableActionList
-                scrollableActionList.gameObject.SetActive(true);
 
-                //get sorted hero list, pos[0] should be one with highest actionBarValue
+                //-- Get sorted hero list, pos[0] should be one with highest actionBarValue --
                 activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
                 if (showDebugLogs) { 
                     foreach (var v in activeHeroesSorted)
                         Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
                 }
+
+                //-- Display scrollableActionList --
+                EnablePlayerInputUI(activeHeroesSorted[0]);
+
                 break;
         }
     }
@@ -97,7 +101,15 @@ public class CombatUIController : MonoBehaviour {
     /// <param name="theHero"></param>
     public void EnablePlayerInputUI(Hero theHero)
     {
-
+        //-- Enable ScrollableActionList --
+        scrollableActionList.gameObject.SetActive(true);
+        //-- Set textObject to represent HeroName
+        activeHeroNameTextObj.text = theHero.heroName;
+        //-- Get available actions from Hero and display accordingly in ScrollableActionList
+        //either instantiate a prefab and set buttons on that prefab accordingly
+        //or create prefabs for all buttons
+        //keep them in a class
+        //let that class deal with which buttons is instantiated
     }
 
     public void DisablePlayerInputUI()

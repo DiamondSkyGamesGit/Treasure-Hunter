@@ -49,8 +49,9 @@ namespace HeroData {
         //The hero's available Skills
         public HeroSkills heroSkills;
 
-	    // Use this for initialization
-	    void Start () {
+        #region //--//-- Monobehaviour Methods --\\--\\
+
+        void Start () {
             //-- Get Hero Skills --
             if (heroSkills == null) heroSkills = GetComponent<HeroSkills>();
 
@@ -70,6 +71,24 @@ namespace HeroData {
             CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
         }
 
+        void Update()
+        {
+            //Increment the ActionBar
+            if (actionBarActive)
+            {
+                float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
+                MyActionBar = new ActionBar(0f, 1f, temp + speed * Time.deltaTime);
+
+                //if no player input have been given when action is ready, either
+                //do default hero action
+                //do last hero action again
+                //do queued action
+                //if ATB wait, then just pop up the UI menu when a players action is ready
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Handles what to do in this script based on which Battlestate we're in
         /// </summary>
@@ -88,22 +107,6 @@ namespace HeroData {
             }
         }
 	
-	    void Update ()
-        {
-            //Increment the ActionBar
-            if (actionBarActive)
-            {
-                float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
-                MyActionBar = new ActionBar(0f, 1f, temp + speed * Time.deltaTime);
-
-                //if no player input have been given when action is ready, either
-                //do default hero action
-                //do last hero action again
-                //do queued action
-                //if ATB wait, then just pop up the UI menu when a players action is ready
-            }
-	    }
-
         public void PauseMe(bool amIPaused)
         {
             ActionPaused = amIPaused;

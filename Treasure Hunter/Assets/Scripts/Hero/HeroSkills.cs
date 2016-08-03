@@ -11,6 +11,7 @@ namespace HeroData {
     /// All interactions with the skillsystem is done in this class.
     /// Add component to a PlayableHero gameobject
     /// </summary>
+    [System.Serializable]
     public class HeroSkills : MonoBehaviour {
 
         //certain classes can be coupled since they are so relevant to each other
@@ -23,6 +24,7 @@ namespace HeroData {
         //the attackButton launches an event
         public List<Skill> mySkills = new List<Skill>();
         public Dictionary<string, Skill> mySkillsCollection = new Dictionary<string, Skill>();
+        public CombatUIDefaultActions combatUIDefaultActions;
 
 	    // Use this for initialization
 	    void Start () {

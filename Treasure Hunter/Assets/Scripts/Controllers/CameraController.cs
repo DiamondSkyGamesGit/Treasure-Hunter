@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.ImageEffects;
 
 public class CameraController : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class CameraController : MonoBehaviour {
     public Vector3 defaultCameraRotation;
     public float lerpTime = 2f;
 
+    public Bloom bloomEffect;
+
     private float currentLerpTime;
 
     void Awake()
@@ -18,6 +21,8 @@ public class CameraController : MonoBehaviour {
             Instance = this;
         else if (Instance != this)
             Destroy(gameObject);
+
+        if (bloomEffect == null) bloomEffect = GetComponent<Bloom>();
     }
 
 
@@ -26,14 +31,49 @@ public class CameraController : MonoBehaviour {
 	void Start () {
         defaultCameraPosition = transform.position;
         defaultCameraRotation = transform.localEulerAngles;
-	}
 
-
-
-    public void StartCombatPosition()
-    {
-        //StartCoroutine(LerpToPosition(transform.position, transform.localEulerAngles));
+        CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
     }
+
+    void OnEnable()
+    {
+       
+    }
+
+    void OnDisable()
+    {
+        CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+    }
+
+    void OnBattleStateChanged(CombatController.BattleState battleState)
+    {
+        switch (battleState) { 
+            case (CombatController.BattleState.COMBAT_INTRODUCTION):
+                StartCoroutine(CombatIntroductionImageBloomEffect(1f, 30f));
+                break;
+        }
+    }
+
+    IEnumerator CombatIntroductionImageBloomEffect(float lerpTime, float startBloomIntensity)
+    {
+        float curLerpTime = 0;
+        float targetBloomIntensity = bloomEffect.bloomIntensity;
+        bloomEffect.bloomIntensity = startBloomIntensity;
+        
+        //Descending value from high to low
+        while (bloomEffect.bloomIntensity > targetBloomIntensity)
+        {
+            curLerpTime += Time.deltaTime;
+            float perc = curLerpTime / lerpTime;
+            
+            bloomEffect.bloomIntensity = Mathf.Lerp(startBloomIntensity, targetBloomIntensity, perc);
+            yield return null;
+        }
+        curLerpTime = 0;
+        bloomEffect.bloomIntensity = targetBloomIntensity;
+    }
+
+    #region --Combat Position Methods--
 
     public void StartCombatPositionAt(Vector3 pos)
     {
@@ -88,6 +128,7 @@ public class CameraController : MonoBehaviour {
         }
         currentLerpTime = 0;
     }
+    #endregion
 
     // Update is called once per frame
     void Update () {

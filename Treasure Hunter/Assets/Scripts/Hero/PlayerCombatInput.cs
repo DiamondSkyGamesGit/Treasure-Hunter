@@ -67,8 +67,6 @@ public class PlayerCombatInput : MonoBehaviour {
     void OnDisable()
     {
         CombatController.Instance.onCombatActiveEnemies -= GetEnemyListFromCallback;
-        if (combatCanvas.gameObject.activeSelf)
-            DisablePlayerInput();
     }
 
     void EnablePlayerInput()

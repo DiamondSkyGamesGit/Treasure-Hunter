@@ -36,8 +36,8 @@ public class CombatController : MonoBehaviour {
     public delegate void OnCombatInitiated();
     public event OnCombatInitiated onCombatInitiated;
 
-    public delegate void OnCombatStateChanged(BattleState combatState);
-    public event OnCombatStateChanged onCombatStateChanged;
+    public delegate void OnBattleStateChanged(BattleState combatState);
+    public event OnBattleStateChanged onBattleStateChanged;
 
     //------------State machine
     public enum BattleState
@@ -50,7 +50,8 @@ public class CombatController : MonoBehaviour {
         PLAYER_LOOSE
     }
 
-    public BattleState battleState;
+    public BattleState previousBattleState;
+    public BattleState currentBattleState;
 
     #region --Mono Behaviours--
     void Awake()
@@ -90,12 +91,13 @@ public class CombatController : MonoBehaviour {
         if(onCombatActiveEnemies != null)
             onCombatActiveEnemies(activeEnemies);
 
-        //change CombatState
-        battleState = BattleState.COMBAT_INTRODUCTION;
+        //change BattleState
+        SetCurrentBattleState(BattleState.COMBAT_INTRODUCTION);
+        StartCoroutine(CombatIntroduction(combatIntroTime));
     }
 
     /// <summary>
-    /// The intro time before combat actually starts
+    /// Introduces combat
     /// </summary>
     /// <param name="_combatIntroTime"></param>
     /// <returns></returns>
@@ -106,13 +108,34 @@ public class CombatController : MonoBehaviour {
         //better to write longer stuff here than import Sys.Diag and have to write alot to use Debug.Log....
         
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
         while(timer.Elapsed.TotalSeconds <= _combatIntroTime)
         {
+            Debug.Log("am i leaving");
+            Debug.Log(timer.Elapsed.TotalSeconds);
             yield return null;
         }
-        
+        //shouldn't be necessary to reset timer, should be killed when leaving method
+
+        //Change BattleState
+        SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
     }
 
+    /// <summary>
+    /// Sets battlestate
+    /// sets previous battlestate for convenience
+    /// Fires event onBattleStateChanged
+    /// </summary>
+    /// <param name="curBattleState"></param>
+    public void SetCurrentBattleState(BattleState curBattleState)
+    {
+        previousBattleState = currentBattleState;
+        currentBattleState = curBattleState;
+        onBattleStateChanged(currentBattleState);
+        Debug.Log("Current Battlestate = " + currentBattleState);
+    }
+
+    //PlayerInput should do this
     IEnumerator WaitForPlayerInput()
     {
         bool playerHasGivenInput = false;

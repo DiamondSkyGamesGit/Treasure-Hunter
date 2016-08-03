@@ -11,24 +11,23 @@ namespace HeroData {
     [RequireComponent(typeof(HeroSkills))]
 
     [System.Serializable]
-    public class Hero : MonoBehaviour, IPausable {
+    public class Hero : MonoBehaviour, IPausable, IHasActionBar {
 
         //The Hero Name...
         public string heroName;
         
         //Testing for now, must change later into RPG system Initiative Roll with speed values etc
-        [Range(0, 1f)] public float actionBar = 0f;
+        //[Range(0, 1f)] public float actionBar = 0f;
 
-        //prolly change ActionBar to a struct
-        [System.Serializable]
-        public struct ActionBar { public float min; public float max; public ActionBar(float _min, float _max) { min = _min;max = _max; } }
-        public ActionBar theActionBar;
         public float speed = 0.1f;
 
         //think i should do this as an interface with a property or method that heroes and enemies share in some way
         //then maybe controller could call all ICombatEntities to stop their actionBars..?
         public bool actionBarActive = false;
         public bool ActionPaused { get { return actionBarActive; } set { actionBarActive = value; } }
+
+        private ActionBar actionBar;
+        public ActionBar MyActionBar{ get { return actionBar; } set { actionBar = value; } }
 
         //--------Events--------------
         public delegate void OnActionBarFull(Hero theHero);
@@ -37,6 +36,7 @@ namespace HeroData {
         //--------State machine-----------
 
         //the hero must report when it is ready to do something as defined by the state machine
+        //dunno if i need this
         public enum ActionState
         {
             ACTION_BAR_CHARGING,
@@ -51,9 +51,12 @@ namespace HeroData {
 
 	    // Use this for initialization
 	    void Start () {
-
+            //-- Get Hero Skills --
             if (heroSkills == null) heroSkills = GetComponent<HeroSkills>();
-	
+
+            //-- Setup MyActionBar --
+            //NOTE! initialize currentValue to a roll on initiative later, currently Random to spark dynamic combat situation
+            MyActionBar = new ActionBar(0f, 1f, UnityEngine.Random.Range(0, 0.3f));
 	    }
 
         void OnEnable()
@@ -67,6 +70,9 @@ namespace HeroData {
             CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
         }
 
+        /// <summary>
+        /// Handles what to do in this script based on which Battlestate we're in
+        /// </summary>
         void OnBattleStateChanged(CombatController.BattleState battleState)
         {
             switch(battleState)
@@ -74,21 +80,21 @@ namespace HeroData {
                 case (CombatController.BattleState.NORMAL_TIME_FLOW):
                     //do cool stuff
                     actionState = ActionState.ACTION_BAR_CHARGING;
-                    actionBarActive = true;
+                    PauseMe(true);
                     break;
                 case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
-                    actionBarActive = false;
+                    PauseMe(false);
                     break;
             }
         }
 	
 	    void Update ()
         {
+            //Increment the ActionBar
             if (actionBarActive)
             {
-                actionBar += speed * Time.deltaTime;
-                if (actionBar > 1f)
-                    actionBar = 1f;
+                float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
+                MyActionBar = new ActionBar(0f, 1f, temp + speed * Time.deltaTime);
 
                 //if no player input have been given when action is ready, either
                 //do default hero action

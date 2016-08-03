@@ -12,17 +12,20 @@ public class CombatActionBar : MonoBehaviour {
     /// </summary>
     [Tooltip("Must be set in inspector to 0, 1, 2 in order")]
     public int ownerIndex = -1;
-    public float ActionBarValue { get { return owner != null ? owner.actionBar : 0; } }
+    //The current ActionBarValue as given by owner
+    public float ActionBarValue { get { return owner != null ? owner.MyActionBar.CurrentValue : 0; } }
+    //Is the ActionBarActive as given by owner
     public bool ActionBarActive { get { return owner != null ? owner.actionBarActive : false; } }
-    public Image actionBar;
+    //The image that represents actionBarValue from 0 - 1
+    public Image actionBarImage;
     
 	// Use this for initialization
 	void Start ()
     {
-        if (actionBar == null) actionBar = GetComponent<Image>();
-        if (actionBar.type != Image.Type.Filled) { 
-            actionBar.type = Image.Type.Filled;
-            actionBar.fillMethod = Image.FillMethod.Horizontal;
+        if (actionBarImage == null) actionBarImage = GetComponent<Image>();
+        if (actionBarImage.type != Image.Type.Filled) {
+            actionBarImage.type = Image.Type.Filled;
+            actionBarImage.fillMethod = Image.FillMethod.Horizontal;
         }
 
         if (owner == null && ownerIndex != -1) owner = GameController.Instance.activeHeroes[ownerIndex];
@@ -33,7 +36,7 @@ public class CombatActionBar : MonoBehaviour {
     {
         if (ActionBarActive)
         {
-            actionBar.fillAmount = ActionBarValue;
+            actionBarImage.fillAmount = ActionBarValue;
         }
 	}
 }

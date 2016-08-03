@@ -24,6 +24,11 @@ public class CombatUIController : MonoBehaviour {
     public CombatUIOffensiveActions combatUIOffensiveActions;
     public CombatUiTargetSelection combatUITargetSelection;
 
+    //the sorted list on who has highest actionBarvalue
+    public List<Hero> activeHeroesSorted = new List<Hero>();
+
+    public bool showDebugLogs = false;
+
 
     //----------Mono Methods--------------
 	void Start () {
@@ -51,24 +56,46 @@ public class CombatUIController : MonoBehaviour {
         {
             case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
                 //-- Display scrollableActionList
-                List<Hero> temp = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
-                foreach (var v in temp)
-                    Debug.Log(v.heroName + " " + v.actionBar);
+                scrollableActionList.gameObject.SetActive(true);
+
+                //get sorted hero list, pos[0] should be one with highest actionBarValue
+                activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
+                if (showDebugLogs) { 
+                    foreach (var v in activeHeroesSorted)
+                        Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
+                }
                 break;
         }
     }
 
-    //Unsure if this works, test later with more Heroes
+    /// <summary>
+    /// Sort incoming list by highest actionBarValue as first
+    /// </summary>
+    /// <param name="heroes"></param>
+    /// <returns></returns>
     private List<Hero> GetSortedHeroListByActionBarValue(List<Hero> heroes)
     {
-        heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
+        //don't need to sort, just orderBy
+        //heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
+        heroes = heroes.OrderByDescending(x => x.MyActionBar.CurrentValue).ToList();
         List<Hero> temp = new List<Hero>();
         temp = heroes;
         return temp;
-        
     }
 
+    /// <summary>
+    /// start input at Hero.First or Partyleader for method with no params
+    /// </summary>
     public void EnablePlayerInputUI()
+    {
+
+    }
+
+    /// <summary>
+    /// starts input UI at theHero
+    /// </summary>
+    /// <param name="theHero"></param>
+    public void EnablePlayerInputUI(Hero theHero)
     {
 
     }

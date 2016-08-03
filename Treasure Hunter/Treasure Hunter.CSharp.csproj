@@ -102,6 +102,7 @@
     <Compile Include="Assets\Scripts\Hero\SkillDatabase.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageDealer.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IHasActionBar.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IKillable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IPausable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IUIAction.cs" />

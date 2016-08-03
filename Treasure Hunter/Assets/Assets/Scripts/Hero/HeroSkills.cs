@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SkillSystem;
 
 namespace HeroData { 
@@ -21,11 +22,13 @@ namespace HeroData {
         //or
         //the attackButton launches an event
         public List<Skill> mySkills = new List<Skill>();
-        public Dictionary<Skill, string> mySkillsCollection = new Dictionary<Skill, string>();
+        public Dictionary<string, Skill> mySkillsCollection = new Dictionary<string, Skill>();
 
 	    // Use this for initialization
 	    void Start () {
-            mySkillsCollection.Add(new AttackSkill("Attack", 20f, 0.5f), "attackSkill");
+            //i think that certain skills are so default i can statically type them here,
+            //but later when using special skills must do a better way of registering available skills to hero
+            mySkillsCollection.Add(StringsLibrary.AttackSkill, SkillSystem.SkillDatabase.Instance.GetSkillFromCollection(StringsLibrary.AttackSkill));
             
 	    }
 	
@@ -33,5 +36,27 @@ namespace HeroData {
 	    void Update () {
 	
 	    }
+
+        public Skill GetSkill(string key)
+        {
+            foreach(var v in mySkillsCollection)
+            {
+                if (v.Key == key)
+                    return v.Value;
+            }
+            return null;
+        }
+
+        /*Does not work now....
+        public Skill GetSkillByType<T>() where T : Skill
+        {
+            foreach(KeyValuePair<string, Skill> v in mySkillsCollection)
+            {
+                if (v.GetType() is T)
+                    return v.Value;
+            }
+            return null;
+        }
+        */
     }
 }

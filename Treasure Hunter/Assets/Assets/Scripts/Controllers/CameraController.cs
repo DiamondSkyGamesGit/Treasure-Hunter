@@ -28,6 +28,8 @@ public class CameraController : MonoBehaviour {
         defaultCameraRotation = transform.localEulerAngles;
 	}
 
+
+
     public void StartCombatPosition()
     {
         //StartCoroutine(LerpToPosition(transform.position, transform.localEulerAngles));

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 
 /// <summary>
@@ -20,17 +21,33 @@ public class CombatUIController : MonoBehaviour {
     public CombatUIOffensiveActions combatUIOffensiveActions;
     public CombatUiTargetSelection combatUITargetSelection;
 
-	// Use this for initialization
+    Action<int> onCombatStateChangedAction;
+
+    //----------Mono Methods--------------
 	void Start () {
 	
         
 	}
+
+    void OnEnable()
+    {
+        //CombatController.Instance.onCombatStateChanged += 
+    }
 	
-	// Update is called once per frame
+    void OnDisable()
+    {
+
+    }
+
 	void Update () {
 	
 	}
 
+    
+
+    /// <summary>
+    /// Are called when CombatState == 
+    /// </summary>
     void DisplayOffensiveActions()
     {
 

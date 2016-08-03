@@ -15,7 +15,7 @@ namespace SkillSystem {
 
 	    // Use this for initialization
 	    void Start () {
-            attackSkill = new AttackSkill("Attack", 20f, 0.5f);
+            attackSkill = new AttackSkill(StringsLibrary.AttackSkill, 20f, 0.5f);
             attackSkill.SaveToSkillDatabase(attackSkill);
             Debug.Log(SkillDatabase.Instance);
 	    }

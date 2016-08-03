@@ -46,5 +46,13 @@ namespace SkillSystem {
         {
             if (skillCollection.ContainsKey(theKey)) skillCollection.Remove(theKey);
         }
+
+        public Skill GetSkillFromCollection(string key)
+        {
+            Skill theSkill;
+            skillCollection.TryGetValue(key, out theSkill);
+            if (theSkill != null) return theSkill;
+            else return null;
+        }
     }
 }

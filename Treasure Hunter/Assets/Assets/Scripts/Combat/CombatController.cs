@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// This class holds the current combat state
@@ -14,6 +13,13 @@ public class CombatController : MonoBehaviour {
     public static CombatController Instance = null;
 
 
+    /// <summary>
+    ///the time stayed in BattleState.CombatIntroduction before changing state
+    ///Allows for intro animations, camera movement
+    /// </summary>
+    public float combatIntroTime = 3f;
+
+
     // public IDamageDealer[] combatants;
     public List<IDamageDealer> combatants = new List<IDamageDealer>();
     public List<Enemy> enemies = new List<Enemy>();
@@ -21,8 +27,7 @@ public class CombatController : MonoBehaviour {
 
 
     //--------Events and Delegates-------------
-    public delegate void OnIsPlayersTurn();
-    public event OnIsPlayersTurn onIsPlayersTurn;
+
 
     //fired whenever amount of enemies change as well
     public delegate void OnCombatActiveEnemies(List<Enemy> enemyList);
@@ -31,23 +36,23 @@ public class CombatController : MonoBehaviour {
     public delegate void OnCombatInitiated();
     public event OnCombatInitiated onCombatInitiated;
 
-    //should the delegate return CombatState or does callback happen as parameter?
-    public delegate CombatState OnCombatStateChanged();
+    public delegate void OnCombatStateChanged(BattleState combatState);
     public event OnCombatStateChanged onCombatStateChanged;
 
     //------------State machine
-    public enum CombatState
+    public enum BattleState
     {
         NOT_COMBAT,
+        COMBAT_INTRODUCTION,
         NORMAL_TIME_FLOW,
         PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
         PLAYER_WIN,
         PLAYER_LOOSE
     }
 
-    public CombatState combatState;
+    public BattleState battleState;
 
-    
+    #region --Mono Behaviours--
     void Awake()
     {
         if (Instance == null)
@@ -56,12 +61,10 @@ public class CombatController : MonoBehaviour {
             Destroy(gameObject);
     }
 
-	// Use this for initialization
 	void Start () {
 
 	}
 	
-	// Update is called once per frame
 	void Update () {
 	
 	}
@@ -75,9 +78,11 @@ public class CombatController : MonoBehaviour {
     {
 
     }
+    #endregion
 
     public void InitializeCombat(List<Enemy> activeEnemies)
     {
+        //tell all listeners that combat is now initiated
         if (onCombatInitiated != null)
             onCombatInitiated();
 
@@ -85,29 +90,33 @@ public class CombatController : MonoBehaviour {
         if(onCombatActiveEnemies != null)
             onCombatActiveEnemies(activeEnemies);
 
-
-        StartTurn();
+        //change CombatState
+        battleState = BattleState.COMBAT_INTRODUCTION;
     }
 
-    List<Enemy> onActiveEnemiesHandler(List<Enemy> enemies)
+    /// <summary>
+    /// The intro time before combat actually starts
+    /// </summary>
+    /// <param name="_combatIntroTime"></param>
+    /// <returns></returns>
+    IEnumerator CombatIntroduction(float _combatIntroTime)
     {
-        return enemies;
-    }
-
-
-    public void StartTurn()
-    {
-        if (onIsPlayersTurn != null)
-            onIsPlayersTurn();
-        //StartCoroutine(WaitForPlayerInput());
-
+        //start music?
+        //do cool stuff?
+        //better to write longer stuff here than import Sys.Diag and have to write alot to use Debug.Log....
+        
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        while(timer.Elapsed.TotalSeconds <= _combatIntroTime)
+        {
+            yield return null;
+        }
+        
     }
 
     IEnumerator WaitForPlayerInput()
     {
         bool playerHasGivenInput = false;
 
-        Debug.Log(onIsPlayersTurn);
         while (!playerHasGivenInput)
         {
             if (Input.GetMouseButtonDown(0))
@@ -119,15 +128,5 @@ public class CombatController : MonoBehaviour {
         }
         //Delete this, just for testing.
         StartCoroutine(WaitForPlayerInput());
-    }
-
-    void NextTurn()
-    {
-
-    }
-
-    void EndTurn()
-    {
-
     }
 }

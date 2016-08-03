@@ -2,19 +2,22 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using HeroData;
 
 
 /// <summary>
-/// Handles CombatCanvas UI
-/// Button clicks calls methods on this script through static Unity Events
+/// Handles the players control input during combat
 /// </summary>
 public class PlayerCombatInput : MonoBehaviour {
 
     public static PlayerCombatInput Instance = null;
 
     //---------Events and Delegates----------
-    //should create delegates that turn manager listens to
 
+    //need to reassign this delegate to handle the buttonPress that the player pressed
+    //might not need to notify from this class WHICH button was pressed right?
+    //Then the button that is pressed tells UIController what to do forward
+    //then this class just handles the actual Input, not what is done with the input
     public delegate void OnClickAttack();
     public event OnClickAttack onClickAttack;
 
@@ -26,10 +29,12 @@ public class PlayerCombatInput : MonoBehaviour {
     //--------Enemies------
     public List<Enemy> activeEnemies = new List<Enemy>();
 
-    //-----------Layermasks------------
-    public LayerMask enemyLayer;
+    //-------Hero Data-------------
+    //The selected hero is the hero which the player uses the CombatUI for (like FFXII)
+    public Hero currentSelectedHero;
 
     //---------Targeting------------
+    //should be moved out of class
     public TargetSelector targetSelector;
     
     void Awake()
@@ -43,7 +48,6 @@ public class PlayerCombatInput : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        CombatController.Instance.onIsPlayersTurn += EnablePlayerInput;
         CombatController.Instance.onCombatActiveEnemies += GetEnemyListFromCallback;
 
 	}
@@ -62,7 +66,6 @@ public class PlayerCombatInput : MonoBehaviour {
 
     void OnDisable()
     {
-        CombatController.Instance.onIsPlayersTurn -= EnablePlayerInput;
         CombatController.Instance.onCombatActiveEnemies -= GetEnemyListFromCallback;
         if (combatCanvas.gameObject.activeSelf)
             DisablePlayerInput();
@@ -91,30 +94,6 @@ public class PlayerCombatInput : MonoBehaviour {
     {
     }
 
-    IEnumerator SelectTargetWaitForInput()
-    {
-        bool inputGiven = false;
-        while(!inputGiven)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 20000f, enemyLayer, QueryTriggerInteraction.Ignore))
-                {
-                    //change this later
-                    Debug.Log(hit.collider.tag);
-                    if (hit.collider.tag == "Enemy") {
-                        targetSelector.SelectTarget(hit.collider.gameObject.transform);
-                        Player.Instance.DealDamage((IDamageable)hit.collider.GetComponent<Enemy>(), Player.Instance.Damage);
-                    }
-                    inputGiven = true;
-                }
-
-            }
-            yield return null;
-        }
-    }
 
     /// <summary>
     /// Called from UnityEvent static button
@@ -123,6 +102,6 @@ public class PlayerCombatInput : MonoBehaviour {
     {
         if(onClickAttack != null)
             onClickAttack();//Fire event
-        StartCoroutine(SelectTargetWaitForInput());
+        
     }
 }

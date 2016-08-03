@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CombatUIOffensiveActions : CombatUI {
     
-    //don't know if it is a good idea to instantiate these classes, just get the data from them and display them using ScrollableActionList
-    //maybe redefine to OffensiveAction
+
+    //holds the data to display 
 
 	// Use this for initialization
 	void Start () {

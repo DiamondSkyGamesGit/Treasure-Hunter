@@ -39,7 +39,7 @@ public class AttackButton : ActionButton
 
     public override void DoAction()
     {
-        PlayerCombatInput.Instance.Attack();
+        throw new NotImplementedException();
     }
 
     public override void DoAction(Skill skillToUse)

@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour {
         else if (Instance != this)
             Destroy(gameObject);
 
+        DontDestroyOnLoad(gameObject);
+
         if (bloomEffect == null) bloomEffect = GetComponent<Bloom>();
     }
 

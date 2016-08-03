@@ -29,10 +29,15 @@ public class CombatController : MonoBehaviour {
     // i need to know whose turn it is
 
 
-    //--------Events and Delegates-------------
+    #region ----Events and Delegates----
 
     public delegate void OnCombatActiveHeroes(List<Hero> activeHeroes);
     public event OnCombatActiveHeroes onCombatActiveHeroes;
+
+    //if hero party changes during combat this must be fired to subs. Ensure to desubscribe listeners to the previous active heroes list
+    public delegate void OnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes);
+    public event OnCombatActiveHeroesChanged onCombatActiveHeroesChanged;
+
 
     //fired whenever amount of enemies change as well
     public delegate void OnCombatActiveEnemies(List<Enemy> enemyList);
@@ -43,8 +48,10 @@ public class CombatController : MonoBehaviour {
 
     public delegate void OnBattleStateChanged(BattleState combatState);
     public event OnBattleStateChanged onBattleStateChanged;
+    #endregion
 
-    //------------State machine
+
+    #region ----BattleState State Machine------
     public enum BattleState
     {
         NOT_COMBAT,
@@ -57,6 +64,8 @@ public class CombatController : MonoBehaviour {
 
     public BattleState previousBattleState;
     public BattleState currentBattleState;
+
+    #endregion
 
     #region --Mono Behaviours--
     void Awake()
@@ -141,6 +150,13 @@ public class CombatController : MonoBehaviour {
         currentBattleState = curBattleState;
         onBattleStateChanged(currentBattleState);
         Debug.Log("Current Battlestate = " + currentBattleState);
+    }
+
+    public void OnPlayerInputPauseIPausables()
+    {
+        foreach (var v in activeHeroes)
+            v.PauseMe(true);
+        SetCurrentBattleState(BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT);
     }
 
     //PlayerInput should do this

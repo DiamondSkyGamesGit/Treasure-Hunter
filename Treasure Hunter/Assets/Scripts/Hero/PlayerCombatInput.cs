@@ -45,9 +45,16 @@ public class PlayerCombatInput : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update ()
+    {
+        //test pausing of Ipausable entities
+        if(CombatController.Instance.currentBattleState == CombatController.BattleState.NORMAL_TIME_FLOW) {
+            if (Input.GetMouseButtonUp(0))
+            {
+                CombatController.Instance.OnPlayerInputPauseIPausables();
+            }
+        }
+    }
 
     void OnEnable()
     {

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
+using System.Linq;
+using HeroData;
 
 
 /// <summary>
@@ -21,7 +24,6 @@ public class CombatUIController : MonoBehaviour {
     public CombatUIOffensiveActions combatUIOffensiveActions;
     public CombatUiTargetSelection combatUITargetSelection;
 
-    Action<int> onCombatStateChangedAction;
 
     //----------Mono Methods--------------
 	void Start () {
@@ -31,19 +33,36 @@ public class CombatUIController : MonoBehaviour {
 
     void OnEnable()
     {
-        //CombatController.Instance.onCombatStateChanged += 
+        CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
     }
 	
     void OnDisable()
     {
-
+        CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
     }
 
 	void Update () {
 	
 	}
 
-    
+    public void OnBattleStateChanged(CombatController.BattleState battleState)
+    {
+        switch (battleState)
+        {
+            case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
+                Debug.Log(GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes).Count);
+                break;
+        }
+    }
+
+    private List<Hero> GetSortedHeroListByActionBarValue(List<Hero> heroes)
+    {
+        heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
+        List<Hero> temp = new List<Hero>();
+        temp = heroes;
+        return temp;
+        
+    }
 
     /// <summary>
     /// Are called when CombatState == 

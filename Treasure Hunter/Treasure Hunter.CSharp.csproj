@@ -75,6 +75,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Combat\Combat UI\Action Bar\CombatActionBar.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\ActionButton.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\AttackButton.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\SelectTargetButton.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Assets\Scripts\Combat\TargetSelector.cs" />
     <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
     <Compile Include="Assets\Scripts\Controllers\EnemiesController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Data Collections\StringsLibrary.cs" />
     <Compile Include="Assets\Scripts\Editor Extensions\ReadOnlyAttribute.cs" />
     <Compile Include="Assets\Scripts\Enemies\Base Classes\Enemy.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Assets\Scripts\Interfaces\IDamageDealer.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IKillable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IPausable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IUIAction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\BaseClass\Weapon.cs" />
     <Compile Include="Assets\Scripts\Movement\PlayerMovement.cs" />

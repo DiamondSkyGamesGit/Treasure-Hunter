@@ -7,6 +7,7 @@ using HeroData;
 
 /// <summary>
 /// Handles the players control input during combat
+/// namely the movement of selectors on the GUI and firing of events that says the player has in fact interacted with something
 /// </summary>
 public class PlayerCombatInput : MonoBehaviour {
 
@@ -18,16 +19,8 @@ public class PlayerCombatInput : MonoBehaviour {
     //might not need to notify from this class WHICH button was pressed right?
     //Then the button that is pressed tells UIController what to do forward
     //then this class just handles the actual Input, not what is done with the input
-    public delegate void OnClickAttack();
-    public event OnClickAttack onClickAttack;
-
-    //Should listen to an event from turnManager that enables UI control when it's the player's turn
-
-    //---------UI Fields------------
-    public Canvas combatCanvas;
-
-    //--------Enemies------
-    public List<Enemy> activeEnemies = new List<Enemy>();
+    public delegate void OnClickAction();
+    public event OnClickAction onClickAction;
 
     //-------Hero Data-------------
     //The selected hero is the hero which the player uses the CombatUI for (like FFXII)
@@ -48,58 +41,50 @@ public class PlayerCombatInput : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        CombatController.Instance.onCombatActiveEnemies += GetEnemyListFromCallback;
 
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update ()
+    {
+        //test pausing of Ipausable entities
+        if(CombatController.Instance.currentBattleState == CombatController.BattleState.NORMAL_TIME_FLOW) {
+            if (Input.GetMouseButtonUp(0))
+            {
+                CombatController.Instance.OnPlayerInputPauseIPausables();
+            }
+        }
+    }
 
     void OnEnable()
     {
-        //subscribe to turnmanagers onIsPlayersTurn, delegate method allowing player input from here
-        //TurnManager.Instance.onIsPlayersTurn += EnablePlayerInput;
-        CombatController.Instance.onCombatActiveEnemies += GetEnemyListFromCallback;
+
     }
 
     void OnDisable()
     {
-        CombatController.Instance.onCombatActiveEnemies -= GetEnemyListFromCallback;
+
+    }
+
+    void EnableBattleCanvasInput()
+    {
+
+    }
+
+    void DisableBattleCanvasInput()
+    {
+
     }
 
     void EnablePlayerInput()
     {
-        combatCanvas.gameObject.SetActive(true);
+
     }
 
     void DisablePlayerInput()
     {
-        combatCanvas.gameObject.SetActive(false);
-    }
 
-    /// <summary>
-    /// Listens to turnManager, gets list of active enemies from event callback
-    /// </summary>
-    /// <param name="enemies"></param>
-    void GetEnemyListFromCallback(List<Enemy> enemies)
-    {
-        activeEnemies = enemies;
-    }
-
-    void SelectTarget()
-    {
     }
 
 
-    /// <summary>
-    /// Called from UnityEvent static button
-    /// </summary>
-    public void Attack()
-    {
-        if(onClickAttack != null)
-            onClickAttack();//Fire event
-        
-    }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using HeroData;
 
 /// <summary>
 /// This class holds the current combat state
@@ -19,6 +20,8 @@ public class CombatController : MonoBehaviour {
     /// </summary>
     public float combatIntroTime = 3f;
 
+    //The active Heroes
+    public List<Hero> activeHeroes = new List<Hero>();
 
     // public IDamageDealer[] combatants;
     public List<IDamageDealer> combatants = new List<IDamageDealer>();
@@ -26,7 +29,14 @@ public class CombatController : MonoBehaviour {
     // i need to know whose turn it is
 
 
-    //--------Events and Delegates-------------
+    #region ----Events and Delegates----
+
+    public delegate void OnCombatActiveHeroes(List<Hero> activeHeroes);
+    public event OnCombatActiveHeroes onCombatActiveHeroes;
+
+    //if hero party changes during combat this must be fired to subs. Ensure to desubscribe listeners to the previous active heroes list
+    public delegate void OnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes);
+    public event OnCombatActiveHeroesChanged onCombatActiveHeroesChanged;
 
 
     //fired whenever amount of enemies change as well
@@ -38,8 +48,10 @@ public class CombatController : MonoBehaviour {
 
     public delegate void OnBattleStateChanged(BattleState combatState);
     public event OnBattleStateChanged onBattleStateChanged;
+    #endregion
 
-    //------------State machine
+
+    #region ----BattleState State Machine------
     public enum BattleState
     {
         NOT_COMBAT,
@@ -53,6 +65,8 @@ public class CombatController : MonoBehaviour {
     public BattleState previousBattleState;
     public BattleState currentBattleState;
 
+    #endregion
+
     #region --Mono Behaviours--
     void Awake()
     {
@@ -60,6 +74,8 @@ public class CombatController : MonoBehaviour {
             Instance = this;
         if (Instance != this)
             Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
 
 	void Start () {
@@ -83,6 +99,10 @@ public class CombatController : MonoBehaviour {
 
     public void InitializeCombat(List<Enemy> activeEnemies)
     {
+        //REMOVE LATER callback to subs whois active heroes
+        activeHeroes = GameController.Instance.activeHeroes;
+       // onCombatActiveHeroes(activeHeroes); might get null ref because no subs yet
+
         //tell all listeners that combat is now initiated
         if (onCombatInitiated != null)
             onCombatInitiated();
@@ -105,14 +125,11 @@ public class CombatController : MonoBehaviour {
     {
         //start music?
         //do cool stuff?
-        //better to write longer stuff here than import Sys.Diag and have to write alot to use Debug.Log....
         
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         timer.Start();
         while(timer.Elapsed.TotalSeconds <= _combatIntroTime)
         {
-            Debug.Log("am i leaving");
-            Debug.Log(timer.Elapsed.TotalSeconds);
             yield return null;
         }
         //shouldn't be necessary to reset timer, should be killed when leaving method
@@ -135,6 +152,13 @@ public class CombatController : MonoBehaviour {
         Debug.Log("Current Battlestate = " + currentBattleState);
     }
 
+    public void OnPlayerInputPauseIPausables()
+    {
+        foreach (var v in activeHeroes)
+            v.PauseMe(true);
+        SetCurrentBattleState(BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT);
+    }
+
     //PlayerInput should do this
     IEnumerator WaitForPlayerInput()
     {
@@ -149,7 +173,10 @@ public class CombatController : MonoBehaviour {
             }
             yield return null;
         }
-        //Delete this, just for testing.
-        StartCoroutine(WaitForPlayerInput());
+    }
+
+    public void IAmDead(IKillable whoIsDead)
+    {
+
     }
 }

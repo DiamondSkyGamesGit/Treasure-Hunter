@@ -18,7 +18,8 @@ public struct ActionBar
     {
         min= _min;
         max = _max;
-        currentValue = _currentValue;
+        if (_currentValue <= max) currentValue = _currentValue;
+        else currentValue = max;
     }
 }
 

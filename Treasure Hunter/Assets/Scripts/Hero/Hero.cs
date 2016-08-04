@@ -84,8 +84,11 @@ namespace HeroData {
             //Increment the ActionBar
             if (actionBarActive)
             {
+                
                 float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
+                //float previouValue = MyActionBar.CurrentValue;
                 MyActionBar = new ActionBar(0f, 1f, temp + (speed * Time.deltaTime));
+               // bool fireOnActionBarFull = temp == MyActionBar.Max;
 
                 //if no player input have been given when action is ready, either
                 //do default hero action

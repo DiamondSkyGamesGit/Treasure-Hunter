@@ -3,14 +3,10 @@ using System.Collections;
 using System;
 using SkillSystem;
 
-public class SelectTargetButton : ActionButton {
+public class SelectTargetButton : ActionButton//, IActionButtonEventPublisher
+{
 
     public Enemy myTarget;
-
-    public SelectTargetButton():base()
-    {
-        
-    }
 
     protected override void OnEnable()
     {
@@ -28,22 +24,30 @@ public class SelectTargetButton : ActionButton {
 
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => DoAction());
+        myButton.onClick.AddListener(() => PublishActionButtonClick(this, myTarget));
     }
 
     protected override void RemoveButtonListener()
     {
-        myButton.onClick.RemoveListener(() => DoAction());
+        myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, myTarget));
     }
 
     public override void DoAction()
     {
         //hvis jeg targeter en fiende burde jeg sende med en skill som jeg angriper med tenker jeg
         //får lage skill-system da
-        Player.Instance.Attack((IDamageable)myTarget);
+        /*
+        if (onActionButtonClick != null)
+            onActionButtonClick(this);
+            */
     }
 
     public override void DoAction(Skill skillToUse)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void DoAction(ActionButton theActionButton)
     {
         throw new NotImplementedException();
     }

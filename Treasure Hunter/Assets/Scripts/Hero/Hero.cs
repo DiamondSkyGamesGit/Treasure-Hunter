@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using SkillSystem;
-using System;
 
 namespace HeroData { 
     /// <summary>
@@ -11,24 +10,29 @@ namespace HeroData {
     [RequireComponent(typeof(HeroSkills))]
 
     [System.Serializable]
-    public class Hero : MonoBehaviour, IPausable {
+    public class Hero : MonoBehaviour, IPausable, IHasActionBar, ITargetable, IDamageable, IDamageDealer {
 
         //The Hero Name...
         public string heroName;
         
         //Testing for now, must change later into RPG system Initiative Roll with speed values etc
-        [Range(0, 1f)] public float actionBar = 0f;
+        //[Range(0, 1f)] public float actionBar = 0f;
 
-        //prolly change ActionBar to a struct
-        [System.Serializable]
-        public struct ActionBar { public float min; public float max; public ActionBar(float _min, float _max) { min = _min;max = _max; } }
-        public ActionBar theActionBar;
         public float speed = 0.1f;
 
         //think i should do this as an interface with a property or method that heroes and enemies share in some way
         //then maybe controller could call all ICombatEntities to stop their actionBars..?
         public bool actionBarActive = false;
         public bool ActionPaused { get { return actionBarActive; } set { actionBarActive = value; } }
+
+        private ActionBar actionBar;
+        public ActionBar MyActionBar{ get { return actionBar; } set { actionBar = value; } }
+
+        private bool isTargetable = true;
+        public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
+
+        private TargetType _targetType;
+        public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
 
         //--------Events--------------
         public delegate void OnActionBarFull(Hero theHero);
@@ -37,6 +41,7 @@ namespace HeroData {
         //--------State machine-----------
 
         //the hero must report when it is ready to do something as defined by the state machine
+        //dunno if i need this
         public enum ActionState
         {
             ACTION_BAR_CHARGING,
@@ -49,11 +54,18 @@ namespace HeroData {
         //The hero's available Skills
         public HeroSkills heroSkills;
 
-	    // Use this for initialization
-	    void Start () {
+        #region //--//-- Monobehaviour Methods --\\--\\
 
+        void Start () {
+            //-- Get Hero Skills --
             if (heroSkills == null) heroSkills = GetComponent<HeroSkills>();
-	
+
+            //-- Setup MyActionBar --
+            //NOTE! initialize currentValue to a roll on initiative later, currently Random to spark dynamic combat situation
+            MyActionBar = new ActionBar(0f, 1f, UnityEngine.Random.Range(0, 0.3f));
+
+            //-- initialize targetType --
+            _targetType = TargetType.HERO;
 	    }
 
         void OnEnable()
@@ -67,28 +79,13 @@ namespace HeroData {
             CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
         }
 
-        void OnBattleStateChanged(CombatController.BattleState battleState)
+        void Update()
         {
-            switch(battleState)
-            {
-                case (CombatController.BattleState.NORMAL_TIME_FLOW):
-                    //do cool stuff
-                    actionState = ActionState.ACTION_BAR_CHARGING;
-                    actionBarActive = true;
-                    break;
-                case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
-                    actionBarActive = false;
-                    break;
-            }
-        }
-	
-	    void Update ()
-        {
+            //Increment the ActionBar
             if (actionBarActive)
             {
-                actionBar += speed * Time.deltaTime;
-                if (actionBar > 1f)
-                    actionBar = 1f;
+                float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
+                MyActionBar = new ActionBar(0f, 1f, temp + (speed * Time.deltaTime));
 
                 //if no player input have been given when action is ready, either
                 //do default hero action
@@ -96,8 +93,33 @@ namespace HeroData {
                 //do queued action
                 //if ATB wait, then just pop up the UI menu when a players action is ready
             }
-	    }
+        }
 
+        #endregion
+
+        /// <summary>
+        /// Handles what to do in this script based on which Battlestate we're in
+        /// </summary>
+        void OnBattleStateChanged(CombatController.BattleState battleState)
+        {
+            switch(battleState)
+            {
+                case (CombatController.BattleState.NORMAL_TIME_FLOW):
+                    //do cool stuff
+                    actionState = ActionState.ACTION_BAR_CHARGING;
+                    PauseMe(true);
+                    break;
+                case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
+                    PauseMe(false);
+                    break;
+            }
+        }
+
+        public void ResetActionBar()
+        {
+            actionBar = new ActionBar(0f, 1f, 0f);
+        }
+	
         public void PauseMe(bool amIPaused)
         {
             ActionPaused = amIPaused;
@@ -106,6 +128,21 @@ namespace HeroData {
         public bool AmIPaused()
         {
             return ActionPaused;
+        }
+
+        public void TakeDamage(float damage)
+        {
+            
+        }
+
+        public void TakeDamageAnimation()
+        {
+            
+        }
+
+        public void DealDamage(IDamageable target, float damage)
+        {
+
         }
     }
 }

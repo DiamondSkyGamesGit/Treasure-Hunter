@@ -11,6 +11,7 @@ namespace HeroData {
     /// All interactions with the skillsystem is done in this class.
     /// Add component to a PlayableHero gameobject
     /// </summary>
+    [System.Serializable]
     public class HeroSkills : MonoBehaviour {
 
         //certain classes can be coupled since they are so relevant to each other

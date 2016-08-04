@@ -81,7 +81,7 @@
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\SelectTargetButton.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\CombatUI.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\CombatUIController.cs" />
-    <Compile Include="Assets\Scripts\Combat\Combat UI\CombatUIOffensiveActions.cs" />
+    <Compile Include="Assets\Scripts\Combat\Combat UI\CombatUIDefaultActions.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\CombatUiTargetSelection.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\ScrollableActionList.cs" />
     <Compile Include="Assets\Scripts\Combat\CombatController.cs" />
@@ -100,10 +100,14 @@
     <Compile Include="Assets\Scripts\Hero\PlayerCombatInput.cs" />
     <Compile Include="Assets\Scripts\Hero\PlayerInventory.cs" />
     <Compile Include="Assets\Scripts\Hero\SkillDatabase.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IActionButtonEventPublisher.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IActionButtonListener.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageDealer.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IHasActionBar.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IKillable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IPausable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ITargetable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IUIAction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\BaseClass\Weapon.cs" />
     <Compile Include="Assets\Scripts\Movement\PlayerMovement.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="Assets\Scripts\RPG System\Skills\Physical Skills\AttackSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Skill Creator\SkillCreator.cs" />
     <Compile Include="Assets\Scripts\Systems\RPGSystem.cs" />
+    <Compile Include="Assets\Scripts\TestScripts\InstantiationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

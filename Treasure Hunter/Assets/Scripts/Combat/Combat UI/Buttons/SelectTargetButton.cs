@@ -3,9 +3,12 @@ using System.Collections;
 using System;
 using SkillSystem;
 
-public class SelectTargetButton : ActionButton {
+public class SelectTargetButton : ActionButton//, IActionButtonEventPublisher
+{
 
     public Enemy myTarget;
+
+    //public override event OnActionButtonClick onActionButtonClick;
 
     public SelectTargetButton():base()
     {
@@ -40,7 +43,10 @@ public class SelectTargetButton : ActionButton {
     {
         //hvis jeg targeter en fiende burde jeg sende med en skill som jeg angriper med tenker jeg
         //får lage skill-system da
-        Player.Instance.Attack((IDamageable)myTarget);
+        /*
+        if (onActionButtonClick != null)
+            onActionButtonClick(this);
+            */
     }
 
     public override void DoAction(Skill skillToUse)

@@ -5,8 +5,10 @@ using UnityEngine.Events;
 using SkillSystem;
 
 [System.Serializable]
-public class AttackButton : ActionButton
+public class AttackButton : ActionButton//, //IActionButtonEventPublisher
 {
+
+    //public override event OnActionButtonClick onActionButtonClick;
 
     protected override void OnEnable()
     {
@@ -20,8 +22,6 @@ public class AttackButton : ActionButton
     {
         base.OnDisable();
         RemoveButtonListener();
-
-
     }
 
     //Added these for safety in the future
@@ -38,7 +38,14 @@ public class AttackButton : ActionButton
 
     public override void DoAction()
     {
-        throw new NotImplementedException();
+        /*
+        if(onActionButtonClick != null)
+            onActionButtonClick(this);
+
+        Debug.Log(onActionButtonClick);
+        */
+        //how to fix......?
+        //cant seem to get listeners on this object
     }
 
     public override void DoAction(Skill skillToUse)

@@ -120,6 +120,7 @@
     <Compile Include="Assets\Scripts\RPG System\Skills\Physical Skills\AttackSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Skill Creator\SkillCreator.cs" />
     <Compile Include="Assets\Scripts\Systems\RPGSystem.cs" />
+    <Compile Include="Assets\Scripts\TestScripts\InstantiationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

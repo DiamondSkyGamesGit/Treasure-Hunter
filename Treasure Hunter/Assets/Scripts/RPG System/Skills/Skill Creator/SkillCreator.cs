@@ -17,7 +17,6 @@ namespace SkillSystem {
 	    void Start () {
             attackSkill = new AttackSkill(StringsLibrary.AttackSkill, 20f, 0.5f);
             attackSkill.SaveToSkillDatabase(attackSkill);
-            Debug.Log(SkillDatabase.Instance);
 	    }
 	
 	    // Update is called once per frame

@@ -21,16 +21,13 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
     
     public ScrollableActionList scrollableActionList;
     public Text activeHeroNameTextObj;
-    public ActionButton defaultEnemyActionButton;
-
-    public CombatUIDefaultActions combatUIDefaultActions;
-    public CombatUiTargetSelection combatUITargetSelection;
 
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
     //if i am to use activeHero it is very important to update active hero correctly after button listeners have been assigned to the hero's buttons
     //might not be a good system
     public Hero activeHero;
+    public List<ActionButton> currentActionButtons = new List<ActionButton>();
 
     public bool showDebugLogs = false;
 
@@ -50,13 +47,12 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
         CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
         // will give null ref on start unless battlecanvas is not enabled
-        AddButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
+
     }
-	
     void OnDisable()
     {
         CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
-        RemoveButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
+
     }
 
 	void Update () {
@@ -93,6 +89,7 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
     #endregion
 
     #region --//-- On Battle State Changed Methods --\\--
+
     public void OnBattleStateChanged(CombatController.BattleState battleState)
     {
         switch (battleState)
@@ -102,13 +99,18 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
                 //-- Get sorted hero list, pos[0] should be one with highest actionBarValue --
                 activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
                 activeHero = activeHeroesSorted[0];
+
                 if (showDebugLogs) { 
                     foreach (var v in activeHeroesSorted)
                         Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
                 }
 
+
+                //-- Set currentActionButtons
+                currentActionButtons = GetActiveHeroDefaultActionButtons(activeHero);
+
                 //-- Display scrollableActionList --
-                EnablePlayerInputUI(activeHeroesSorted[0]);
+                EnablePlayerInputUI(activeHero);
 
                 break;
         }
@@ -149,18 +151,26 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
     {
         //-- Enable ScrollableActionList --
         scrollableActionList.gameObject.SetActive(true);
+
         //-- Set textObject to represent HeroName
         activeHeroNameTextObj.text = theHero.heroName;
+
         //-- Get available actions from Hero and display accordingly in ScrollableActionList
-        //either instantiate a prefab and set buttons on that prefab accordingly
-        //or create prefabs for all buttons
-        //keep them in a class
-        //let that class deal with which buttons is instantiated
+
+        
+        scrollableActionList.InstantiateAndDisplayItems(currentActionButtons);
+        //add listeners to the buttons
+        AddButtonListeners(scrollableActionList.actionButtons);
     }
+    //either instantiate a prefab and set buttons on that prefab accordingly
+    //or create prefabs for all buttons
+    //keep them in a class
+    //let that class deal with which buttons is instantiated
+
 
     public void DisablePlayerInputUI()
     {
-
+        RemoveButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
     }
 
     #endregion

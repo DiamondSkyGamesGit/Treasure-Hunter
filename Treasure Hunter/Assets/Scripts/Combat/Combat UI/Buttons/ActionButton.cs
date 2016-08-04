@@ -9,7 +9,6 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
 
     public Button myButton;
     public LayoutElement myLayoutElement;
-
     public event OnActionButtonClick onActionButtonClick;
 
     //add sprite icon
@@ -24,7 +23,6 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
 
 	// Use this for initialization
 	void Start () {
-        
 
 	}
 
@@ -38,12 +36,13 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
     {
 
     }
-
+    
     protected void PublishActionButtonClick(ActionButton theActionButton)
     {
-        onActionButtonClick(theActionButton);
+        if(onActionButtonClick != null)
+            onActionButtonClick(theActionButton);
     }
-
+    
     protected abstract void AddButtonListener();
     protected abstract void RemoveButtonListener();
 

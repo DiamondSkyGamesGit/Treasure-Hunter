@@ -27,7 +27,6 @@ public class CombatEncounter : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("CALLED");
         if (other.tag == "Player")
             StartCombatEncounter();
     }

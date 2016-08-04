@@ -5,14 +5,14 @@ public class EnemyTest : Enemy {
    public float myHealth { get { return myHealth; } }
 	// Use this for initialization
 	void Start () {
-        Debug.Log(Health);
-        Debug.Log(BaseDamage);
+
         //KUL KODE
+        /*
         foreach(var i in typeof(Enemy).GetInterfaces())
         {
             Debug.Log(i);
         }
-        
+        */
         
 	}
 

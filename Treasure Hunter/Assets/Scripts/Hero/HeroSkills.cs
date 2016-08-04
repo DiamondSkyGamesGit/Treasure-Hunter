@@ -24,7 +24,6 @@ namespace HeroData {
         //the attackButton launches an event
         public List<Skill> mySkills = new List<Skill>();
         public Dictionary<string, Skill> mySkillsCollection = new Dictionary<string, Skill>();
-        public CombatUIDefaultActions combatUIDefaultActions;
 
 	    // Use this for initialization
 	    void Start () {

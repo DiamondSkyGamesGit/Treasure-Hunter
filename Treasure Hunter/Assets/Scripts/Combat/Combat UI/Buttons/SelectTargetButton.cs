@@ -8,13 +8,6 @@ public class SelectTargetButton : ActionButton//, IActionButtonEventPublisher
 
     public Enemy myTarget;
 
-    //public override event OnActionButtonClick onActionButtonClick;
-
-    public SelectTargetButton():base()
-    {
-        
-    }
-
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -31,12 +24,12 @@ public class SelectTargetButton : ActionButton//, IActionButtonEventPublisher
 
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => DoAction());
+        myButton.onClick.AddListener(() => PublishActionButtonClick(this, myTarget));
     }
 
     protected override void RemoveButtonListener()
     {
-        myButton.onClick.RemoveListener(() => DoAction());
+        myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, myTarget));
     }
 
     public override void DoAction()

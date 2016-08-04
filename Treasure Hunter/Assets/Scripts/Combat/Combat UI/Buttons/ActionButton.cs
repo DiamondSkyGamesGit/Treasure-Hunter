@@ -10,6 +10,13 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
     public Button myButton;
     public LayoutElement myLayoutElement;
     public event OnActionButtonClick onActionButtonClick;
+    public enum ActionButtonType
+    {
+        ATTACK,
+        SELECT_TARGET
+    }
+
+    public ActionButtonType actionButtonType;
 
     //add sprite icon
     //add text shown
@@ -37,10 +44,10 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
 
     }
     
-    protected void PublishActionButtonClick(ActionButton theActionButton)
+    protected void PublishActionButtonClick(ActionButton theActionButton, ITargetable theTarget)
     {
         if(onActionButtonClick != null)
-            onActionButtonClick(theActionButton);
+            onActionButtonClick(theActionButton, theTarget);
     }
     
     protected abstract void AddButtonListener();

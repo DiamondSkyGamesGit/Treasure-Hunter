@@ -9,16 +9,10 @@ using UnityEngine.UI;
 /// </summary>
 public class CombatUiTargetSelection : CombatUI {
 
-    //Need instances of these in case more players have their own scrollableActionLists..
     public ScrollableActionList scrollableActionList;
     public SelectTargetButton actionButtonPrefab;
     public List<Enemy> activeEnemies = new List<Enemy>();
 
-    void Start()
-    {
-
-        CombatController.Instance.onCombatActiveEnemies += OnCombatGetActiveEnemies;
-    }
 
     void OnEnable()
     {

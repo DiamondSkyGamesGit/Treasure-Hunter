@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using SkillSystem;
-using System;
 
 namespace HeroData { 
     /// <summary>
@@ -11,7 +10,7 @@ namespace HeroData {
     [RequireComponent(typeof(HeroSkills))]
 
     [System.Serializable]
-    public class Hero : MonoBehaviour, IPausable, IHasActionBar {
+    public class Hero : MonoBehaviour, IPausable, IHasActionBar, ITargetable, IDamageable, IDamageDealer {
 
         //The Hero Name...
         public string heroName;
@@ -28,6 +27,12 @@ namespace HeroData {
 
         private ActionBar actionBar;
         public ActionBar MyActionBar{ get { return actionBar; } set { actionBar = value; } }
+
+        private bool isTargetable = true;
+        public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
+
+        private TargetType _targetType;
+        public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
 
         //--------Events--------------
         public delegate void OnActionBarFull(Hero theHero);
@@ -58,6 +63,9 @@ namespace HeroData {
             //-- Setup MyActionBar --
             //NOTE! initialize currentValue to a roll on initiative later, currently Random to spark dynamic combat situation
             MyActionBar = new ActionBar(0f, 1f, UnityEngine.Random.Range(0, 0.3f));
+
+            //-- initialize targetType --
+            _targetType = TargetType.HERO;
 	    }
 
         void OnEnable()
@@ -77,7 +85,7 @@ namespace HeroData {
             if (actionBarActive)
             {
                 float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
-                MyActionBar = new ActionBar(0f, 1f, temp + speed * Time.deltaTime);
+                MyActionBar = new ActionBar(0f, 1f, temp + (speed * Time.deltaTime));
 
                 //if no player input have been given when action is ready, either
                 //do default hero action
@@ -106,6 +114,11 @@ namespace HeroData {
                     break;
             }
         }
+
+        public void ResetActionBar()
+        {
+            actionBar = new ActionBar(0f, 1f, 0f);
+        }
 	
         public void PauseMe(bool amIPaused)
         {
@@ -115,6 +128,21 @@ namespace HeroData {
         public bool AmIPaused()
         {
             return ActionPaused;
+        }
+
+        public void TakeDamage(float damage)
+        {
+            
+        }
+
+        public void TakeDamageAnimation()
+        {
+            
+        }
+
+        public void DealDamage(IDamageable target, float damage)
+        {
+
         }
     }
 }

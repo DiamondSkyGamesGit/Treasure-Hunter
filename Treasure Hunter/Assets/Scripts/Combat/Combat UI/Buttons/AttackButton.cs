@@ -27,25 +27,18 @@ public class AttackButton : ActionButton//, //IActionButtonEventPublisher
     //Added these for safety in the future
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => PublishActionButtonClick(this));
+        myButton.onClick.AddListener(() => PublishActionButtonClick(this, null));
     }
 
     protected override void RemoveButtonListener()
     {
         if (myButton.onClick != null)
-            myButton.onClick.RemoveListener(() => PublishActionButtonClick(this));
+            myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, null));
     }
 
     public override void DoAction()
     {
-        /*
-        if(onActionButtonClick != null)
-            onActionButtonClick(this);
 
-        Debug.Log(onActionButtonClick);
-        */
-        //how to fix......?
-        //cant seem to get listeners on this object
     }
 
     public override void DoAction(Skill skillToUse)

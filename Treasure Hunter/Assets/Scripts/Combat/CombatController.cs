@@ -13,7 +13,7 @@ public class CombatController : MonoBehaviour {
 
     public static CombatController Instance = null;
 
-
+    public GameObject theBattleCanvas;
     /// <summary>
     ///the time stayed in BattleState.CombatIntroduction before changing state
     ///Allows for intro animations, camera movement
@@ -99,6 +99,8 @@ public class CombatController : MonoBehaviour {
 
     public void InitializeCombat(List<Enemy> activeEnemies)
     {
+        theBattleCanvas.SetActive(true);
+
         //REMOVE LATER callback to subs whois active heroes
         activeHeroes = GameController.Instance.activeHeroes;
        // onCombatActiveHeroes(activeHeroes); might get null ref because no subs yet
@@ -152,27 +154,14 @@ public class CombatController : MonoBehaviour {
         Debug.Log("Current Battlestate = " + currentBattleState);
     }
 
-    public void OnPlayerInputPauseIPausables()
+    public void OnPlayerInputPauseIPausables(bool isPaused)
     {
         foreach (var v in activeHeroes)
-            v.PauseMe(true);
-        SetCurrentBattleState(BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT);
-    }
-
-    //PlayerInput should do this
-    IEnumerator WaitForPlayerInput()
-    {
-        bool playerHasGivenInput = false;
-
-        while (!playerHasGivenInput)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Player.Instance.Attack((IDamageable)combatants[0]);
-                playerHasGivenInput = true;
-            }
-            yield return null;
-        }
+            v.PauseMe(isPaused);
+        if (isPaused)
+            SetCurrentBattleState(BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT);
+        else
+            SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
     }
 
     public void IAmDead(IKillable whoIsDead)

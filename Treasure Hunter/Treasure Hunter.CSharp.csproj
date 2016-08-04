@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\Interfaces\IHasActionBar.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IKillable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IPausable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ITargetable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IUIAction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\BaseClass\Weapon.cs" />
     <Compile Include="Assets\Scripts\Movement\PlayerMovement.cs" />

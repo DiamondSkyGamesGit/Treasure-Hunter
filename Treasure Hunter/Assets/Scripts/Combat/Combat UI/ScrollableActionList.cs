@@ -34,10 +34,25 @@ public class ScrollableActionList : MonoBehaviour {
 	
 	}
 
+    public void DestroyActionButtons()
+    {
+        if(actionButtons.Count > 0)
+        {
+            foreach (var g in actionButtons)
+                Destroy(g.gameObject);
+        }
+        else
+        {
+            Debug.LogWarning("No actionButtons in List");
+            return;
+        }
+    }
+
     public void InstantiateAndDisplayItems<T>(List<T> itemsToDisplay) where T : ActionButton
     {
         //have to explicitly say localposition is Vector3.zero each time, else it is reset to weird pos @onQuit for some reason.......
         contentArea.localPosition = Vector3.zero;
+
         actionButtons.Clear();
         for (int i = 0; i < itemsToDisplay.Count; i++)
         {

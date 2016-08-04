@@ -51,7 +51,15 @@ public class PlayerCombatInput : MonoBehaviour {
         if(CombatController.Instance.currentBattleState == CombatController.BattleState.NORMAL_TIME_FLOW) {
             if (Input.GetMouseButtonUp(0))
             {
-                CombatController.Instance.OnPlayerInputPauseIPausables();
+                CombatController.Instance.OnPlayerInputPauseIPausables(true);
+            }
+        }
+
+        if(CombatController.Instance.currentBattleState == CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT)
+        {
+            if (Input.GetKeyUp(KeyCode.Backspace))
+            {
+                CombatController.Instance.OnPlayerInputPauseIPausables(false);
             }
         }
     }

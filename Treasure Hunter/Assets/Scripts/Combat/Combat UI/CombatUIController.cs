@@ -22,12 +22,29 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
     public ScrollableActionList scrollableActionList;
     public Text activeHeroNameTextObj;
 
+    public CombatUIDefaultActions defaultActions;
+
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
     //if i am to use activeHero it is very important to update active hero correctly after button listeners have been assigned to the hero's buttons
     //might not be a good system
     public Hero activeHero;
     public List<ActionButton> currentActionButtons = new List<ActionButton>();
+
+    public enum SelectedAction
+    {
+        NOT_SELECTED_YET,
+        ATTACK,
+        MAGIC,
+        ITEM,
+        SELECT_TARGET_ENEMY
+    }
+
+    public SelectedAction previousSelectedAction;
+    public SelectedAction selectedAction;
+
+    public delegate void OnSelectedActionChanged(SelectedAction currentAction);
+    public event OnSelectedActionChanged onSelectedActionChanged;
 
     public bool showDebugLogs = false;
 
@@ -46,27 +63,25 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
             activeHero = GameController.Instance.activeHeroes[0];
 
         CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
-        // will give null ref on start unless battlecanvas is not enabled
+        onSelectedActionChanged += OnSelectionChange;
 
     }
     void OnDisable()
     {
         CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+        onSelectedActionChanged -= OnSelectionChange;
 
     }
 
-	void Update () {
-	
-	}
     #endregion
 
 
     #region --//-- Add & Remove Listeners Methods --\\--
 
     
-    List<ActionButton> GetActiveHeroDefaultActionButtons(Hero theHero)
+    List<ActionButton> GetDefaultActionButtons()
     {
-        return theHero.heroSkills.combatUIDefaultActions.actionButtons;
+        return defaultActions.actionButtons;
     }
 
     //hopefully it goes correctly to the right hero, not a problem with prefabs or shared vars or something
@@ -105,12 +120,17 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
                         Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
                 }
 
-
                 //-- Set currentActionButtons
-                currentActionButtons = GetActiveHeroDefaultActionButtons(activeHero);
+                currentActionButtons = GetDefaultActionButtons();
 
                 //-- Display scrollableActionList --
                 EnablePlayerInputUI(activeHero);
+
+                break;
+
+            case (CombatController.BattleState.NORMAL_TIME_FLOW):
+
+                DisablePlayerInputUI();
 
                 break;
         }
@@ -133,20 +153,43 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
     #endregion
 
-    #region --//-- Input Handling Methods --\\--
+    #region --//--  Methods Handling Which UI components to show --\\--
 
-    /// <summary>
-    /// start input at Hero.First or Partyleader for method with no params
-    /// </summary>
-    public void EnablePlayerInputUI()
+    public void OnSelectionChange(SelectedAction theNewSelectedAction)
     {
+        switch (theNewSelectedAction)
+        {
+            case (SelectedAction.NOT_SELECTED_YET):
 
+                break;
+
+            case (SelectedAction.ATTACK):
+                //remove listeners
+                //destroy current actionbuttons in scrollableList
+                //Display Target Selection UI
+                break;
+            case (SelectedAction.MAGIC):
+
+                break;
+            case (SelectedAction.ITEM):
+
+                break;
+
+            case (SelectedAction.SELECT_TARGET_ENEMY):
+
+                break;
+        }
     }
 
-    /// <summary>
-    /// starts input UI at theHero
-    /// </summary>
-    /// <param name="theHero"></param>
+    public void SetCurrentSelectedAction(SelectedAction _currentSelectedAction)
+    {
+        previousSelectedAction = selectedAction;
+        selectedAction = _currentSelectedAction;
+        if(onSelectedActionChanged != null)
+            onSelectedActionChanged(selectedAction);
+    }
+    
+
     public void EnablePlayerInputUI(Hero theHero)
     {
         //-- Enable ScrollableActionList --
@@ -157,41 +200,41 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
         //-- Get available actions from Hero and display accordingly in ScrollableActionList
 
-        
         scrollableActionList.InstantiateAndDisplayItems(currentActionButtons);
         //add listeners to the buttons
+        //CAN ONLY BE DONE AFTER INSTANTIATION OF THE FUUUUUUUUUCKING BUTTONS REMEMBER
         AddButtonListeners(scrollableActionList.actionButtons);
     }
-    //either instantiate a prefab and set buttons on that prefab accordingly
-    //or create prefabs for all buttons
-    //keep them in a class
-    //let that class deal with which buttons is instantiated
-
 
     public void DisablePlayerInputUI()
     {
-        RemoveButtonListeners(GetActiveHeroDefaultActionButtons(activeHero));
+        RemoveButtonListeners(scrollableActionList.actionButtons);
+        //Destroy have to be called from outside so i can handle listeners from this class
+        scrollableActionList.DestroyActionButtons();
+        scrollableActionList.gameObject.SetActive(false);
     }
 
     #endregion
 
-    public void OnActionButtonClicked(ActionButton theButton)
+    public void OnActionButtonClicked(ActionButton theButton, ITargetable theTarget)
     {
-        Debug.Log("Got tha message!");
+        Debug.Log("Got tha message! Button clicked was " + theButton.GetType() + " of ButtonType " + theButton.actionButtonType);
+        if (theTarget != null) Debug.Log("The Target was of type " + theTarget.targetType);
+        switch (theButton.actionButtonType)
+        {
+            case ActionButton.ActionButtonType.ATTACK:
+                SetCurrentSelectedAction(SelectedAction.ATTACK);
+                //display target selection
+                break;
+
+        }
+        //so now we got here.. what to do?
+        //should change state somewhere, since we now have chosen an Action
+        //if we have pressed Attack the current Action selected is Attack
+        //next Action is Select Target
     }
 
-    /// <summary>
-    /// Are called when CombatState == 
-    /// </summary>
-    void DisplayOffensiveActions()
-    {
 
-    }
-
-    void DisplayTargetSelection()
-    {
-        //scrollableActionList.DisplayActions<ActionButton>(combatUITargetSelection.activeEnemies);
-    }
 
 
 }

@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDealer
+public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDealer, ITargetable
 {
 
     private Renderer myRenderer;
@@ -20,14 +20,17 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
     private float maxDamage;
     public float MaxDamage { get { return maxDamage; } protected set { maxDamage = value; } }
 
+    private bool isTargetable = true;
+    public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
 
+    private TargetType _targetType;
+    public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
 
     public Color defaultColor;
     public Color takeDamageTargetColor;
 
     public float takeDamageAnimationSpeed = .2f;
 
-    public ActionButton myActionButton;
 
     void Awake()
     {
@@ -37,7 +40,8 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
 
     void Start()
     {
-        myActionButton = new SelectTargetButton();
+
+        _targetType = TargetType.ENEMY;
     }
 
 

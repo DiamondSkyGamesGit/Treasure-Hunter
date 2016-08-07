@@ -95,6 +95,8 @@
     <Compile Include="Assets\Scripts\Editor Extensions\ReadOnlyAttribute.cs" />
     <Compile Include="Assets\Scripts\Enemies\Base Classes\Enemy.cs" />
     <Compile Include="Assets\Scripts\Enemies\Enemy Types\EnemyTest.cs" />
+    <Compile Include="Assets\Scripts\Event System\Messages.cs" />
+    <Compile Include="Assets\Scripts\Event System\Messenger.cs" />
     <Compile Include="Assets\Scripts\Hero\Hero.cs" />
     <Compile Include="Assets\Scripts\Hero\HeroSkills.cs" />
     <Compile Include="Assets\Scripts\Hero\Player.cs" />

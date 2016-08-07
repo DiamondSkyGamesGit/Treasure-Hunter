@@ -71,12 +71,12 @@ namespace HeroData {
         void OnEnable()
         {
             //Add myself to GameController active heroes?
-            CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
+            Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
         }
 
         void OnDisable()
         {
-            CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+            Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged);
         }
 
         void Update()
@@ -103,9 +103,9 @@ namespace HeroData {
         /// <summary>
         /// Handles what to do in this script based on which Battlestate we're in
         /// </summary>
-        void OnBattleStateChanged(BattleState battleState)
+        void OnBattleStateChanged(OnBattleStateChanged battleState)
         {
-            switch(battleState)
+            switch(battleState.currentBattleState)
             {
                 case (BattleState.NORMAL_TIME_FLOW):
                     //do cool stuff

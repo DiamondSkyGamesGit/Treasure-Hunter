@@ -43,9 +43,19 @@ public class PlayerCombatInput : MonoBehaviour {
 
 
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    void OnEnable()
+    {
+
+    }
+
+    void OnDisable()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         //test pausing of Ipausable entities
         if(CombatController.Instance.currentBattleState == BattleState.NORMAL_TIME_FLOW) {
@@ -64,15 +74,7 @@ public class PlayerCombatInput : MonoBehaviour {
         }
     }
 
-    void OnEnable()
-    {
 
-    }
-
-    void OnDisable()
-    {
-
-    }
 
     void EnableBattleCanvasInput()
     {

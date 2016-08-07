@@ -62,13 +62,15 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
         if (activeHero == null)
             activeHero = GameController.Instance.activeHeroes[0];
 
-        CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
+        Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
+        //??
         onSelectedActionChanged += OnSelectionChange;
 
     }
     void OnDisable()
     {
-        CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+        Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged);
+        //??
         onSelectedActionChanged -= OnSelectionChange;
 
     }
@@ -105,9 +107,9 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
     #region --//-- On Battle State Changed Methods --\\--
 
-    public void OnBattleStateChanged(BattleState battleState)
+    public void OnBattleStateChanged(OnBattleStateChanged newBattleState)
     {
-        switch (battleState)
+        switch (newBattleState.currentBattleState)
         {
             case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
 

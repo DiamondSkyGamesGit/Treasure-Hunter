@@ -19,29 +19,33 @@ public class MyEventManager : MonoBehaviour {
 
     }
 
+    //--//-- Delegates and Events --\\--\\
+
+    public delegate void OnCombatInitiated();
+    public event OnCombatInitiated onCombatInitiated;
+    public void FireOnCombatInitiated() { if (onCombatInitiated != null) onCombatInitiated(); }
+
     public delegate void OnCombatActiveHeroes(List<Hero> activeHeroes);
     public event OnCombatActiveHeroes onCombatActiveHeroes;
-    public void FireOnCombatActiveHeroes(List<Hero> activeHeroes) { onCombatActiveHeroes(activeHeroes); }
+    public void FireOnCombatActiveHeroes(List<Hero> activeHeroes) { if (onCombatActiveHeroes != null) onCombatActiveHeroes(activeHeroes); }
 
     //if hero party changes during combat this must be fired to subs. Ensure to desubscribe listeners to the previous active heroes list
-    public delegate void OnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes);
-    public event OnCombatActiveHeroesChanged onCombatActiveHeroesChanged;
-    public void FireOnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes) { onCombatActiveHeroesChanged(previousActiveHeroes, activeHeroes); }
+   // public delegate void OnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes);
+   // public event OnCombatActiveHeroesChanged onCombatActiveHeroesChanged;
+   // public void FireOnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes) { if (onCombatActiveHeroesChanged != null) onCombatActiveHeroesChanged(previousActiveHeroes, activeHeroes); }
 
     //fired whenever amount of enemies change as well
     public delegate void OnCombatActiveEnemies(List<Enemy> enemyList);
     public event OnCombatActiveEnemies onCombatActiveEnemies;
-
-    public delegate void OnCombatInitiated();
-    public event OnCombatInitiated onCombatInitiated;
-
+    public void FireOnCombatActiveEnemies(List<Enemy> enemyList) { if (onCombatActiveEnemies != null) onCombatActiveEnemies(enemyList); }
+    
     public delegate void OnBattleStateChanged(BattleState combatState);
     public event OnBattleStateChanged onBattleStateChanged;
+    public void FireOnBattleStateChanged(BattleState battleState) { if (onBattleStateChanged != null) onBattleStateChanged(battleState); }
+
 
     // Use this for initialization
     void Start () {
-
-
 
 	}
 

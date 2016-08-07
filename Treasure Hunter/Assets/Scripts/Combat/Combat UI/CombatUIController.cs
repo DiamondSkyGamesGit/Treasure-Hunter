@@ -105,11 +105,11 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
     #region --//-- On Battle State Changed Methods --\\--
 
-    public void OnBattleStateChanged(CombatController.BattleState battleState)
+    public void OnBattleStateChanged(BattleState battleState)
     {
         switch (battleState)
         {
-            case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
+            case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
 
                 //-- Get sorted hero list, pos[0] should be one with highest actionBarValue --
                 activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
@@ -128,7 +128,7 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
                 break;
 
-            case (CombatController.BattleState.NORMAL_TIME_FLOW):
+            case (BattleState.NORMAL_TIME_FLOW):
 
                 DisablePlayerInputUI();
 

@@ -47,10 +47,10 @@ public class CameraController : MonoBehaviour {
         CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
     }
 
-    void OnBattleStateChanged(CombatController.BattleState battleState)
+    void OnBattleStateChanged(BattleState battleState)
     {
         switch (battleState) { 
-            case (CombatController.BattleState.COMBAT_INTRODUCTION):
+            case (BattleState.COMBAT_INTRODUCTION):
                 StartCoroutine(CombatIntroductionImageBloomEffect(1f, 30f));
                 break;
         }

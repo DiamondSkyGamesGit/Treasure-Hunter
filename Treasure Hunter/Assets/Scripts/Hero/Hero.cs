@@ -103,16 +103,16 @@ namespace HeroData {
         /// <summary>
         /// Handles what to do in this script based on which Battlestate we're in
         /// </summary>
-        void OnBattleStateChanged(CombatController.BattleState battleState)
+        void OnBattleStateChanged(BattleState battleState)
         {
             switch(battleState)
             {
-                case (CombatController.BattleState.NORMAL_TIME_FLOW):
+                case (BattleState.NORMAL_TIME_FLOW):
                     //do cool stuff
                     actionState = ActionState.ACTION_BAR_CHARGING;
                     PauseMe(true);
                     break;
-                case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
+                case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
                     PauseMe(false);
                     break;
             }

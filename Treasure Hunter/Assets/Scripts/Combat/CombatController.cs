@@ -3,6 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using HeroData;
 
+
+
+//global definition of BattleState
+public enum BattleState
+{
+    NOT_COMBAT,
+    COMBAT_INTRODUCTION,
+    NORMAL_TIME_FLOW,
+    PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
+    PLAYER_WIN,
+    PLAYER_LOOSE
+}
+
+
 /// <summary>
 /// This class holds the current combat state
 /// Handles pausing of other scripts when the player is in PlayerInputMode
@@ -52,15 +66,7 @@ public class CombatController : MonoBehaviour {
 
 
     #region ----BattleState State Machine------
-    public enum BattleState
-    {
-        NOT_COMBAT,
-        COMBAT_INTRODUCTION,
-        NORMAL_TIME_FLOW,
-        PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
-        PLAYER_WIN,
-        PLAYER_LOOSE
-    }
+
 
     public BattleState previousBattleState;
     public BattleState currentBattleState;

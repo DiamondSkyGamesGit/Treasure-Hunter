@@ -48,14 +48,14 @@ public class PlayerCombatInput : MonoBehaviour {
 	void Update ()
     {
         //test pausing of Ipausable entities
-        if(CombatController.Instance.currentBattleState == CombatController.BattleState.NORMAL_TIME_FLOW) {
+        if(CombatController.Instance.currentBattleState == BattleState.NORMAL_TIME_FLOW) {
             if (Input.GetMouseButtonUp(0))
             {
                 CombatController.Instance.OnPlayerInputPauseIPausables(true);
             }
         }
 
-        if(CombatController.Instance.currentBattleState == CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT)
+        if(CombatController.Instance.currentBattleState == BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT)
         {
             if (Input.GetKeyUp(KeyCode.Backspace))
             {

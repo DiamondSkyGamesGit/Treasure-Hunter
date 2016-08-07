@@ -19,9 +19,13 @@ public class MyDebugger : MonoBehaviour {
             }
         }
         */
-        
 
-        //temp = other.get
+
+    //temp = other.get
+
+    OnHealthChanged onHealthChanged = new OnHealthChanged();
+    
+    
     void Awake()
     {
         Messenger.AddListener<MyTest>(GetMessage);
@@ -31,8 +35,29 @@ public class MyDebugger : MonoBehaviour {
     }
 
 	void Start () {
-        
+
+        Messenger.AddListener<OnHealthChanged>(MyOnHealthChanged);
+        onHealthChanged.message = "Yo! Sender denne eventen";
+        onHealthChanged.newHealth = 100f;
+        onHealthChanged.player = GameController.Instance.activeHeroes[0];
+        Messenger.Dispatch(onHealthChanged);
+
 	}
+
+    OnHealthChanged SetMessageOnHealthChangedData(string message, float newHealth, HeroData.Hero player)
+    {
+        OnHealthChanged temp = new OnHealthChanged();
+        temp.message = message;
+        temp.newHealth = newHealth;
+        temp.player = player;
+        return temp;
+    }
+
+    void MyOnHealthChanged(OnHealthChanged healthChange)
+    {
+        Debug.Log(healthChange.message + " " + healthChange.newHealth);
+    }
+
 
 	void Update () {
 	

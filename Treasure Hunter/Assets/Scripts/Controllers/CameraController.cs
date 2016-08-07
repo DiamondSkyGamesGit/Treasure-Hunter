@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour {
         defaultCameraPosition = transform.position;
         defaultCameraRotation = transform.localEulerAngles;
 
-        CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
+        Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
     }
 
     void OnEnable()
@@ -44,13 +44,13 @@ public class CameraController : MonoBehaviour {
 
     void OnDisable()
     {
-        CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+        Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged); 
     }
 
-    void OnBattleStateChanged(CombatController.BattleState battleState)
+    void OnBattleStateChanged(OnBattleStateChanged newBattleState)
     {
-        switch (battleState) { 
-            case (CombatController.BattleState.COMBAT_INTRODUCTION):
+        switch (newBattleState.currentBattleState) { 
+            case (BattleState.COMBAT_INTRODUCTION):
                 StartCoroutine(CombatIntroductionImageBloomEffect(1f, 30f));
                 break;
         }

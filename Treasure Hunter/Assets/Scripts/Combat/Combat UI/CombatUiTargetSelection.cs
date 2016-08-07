@@ -16,12 +16,12 @@ public class CombatUiTargetSelection : CombatUI {
 
     void OnEnable()
     {
-        CombatController.Instance.onCombatActiveEnemies += OnCombatGetActiveEnemies;
+        MyEventManager.Instance.onCombatActiveEnemies += OnCombatGetActiveEnemies;
     }
 
     void OnDisable()
     {
-        CombatController.Instance.onCombatActiveEnemies -= OnCombatGetActiveEnemies;
+        MyEventManager.Instance.onCombatActiveEnemies -= OnCombatGetActiveEnemies;
     }
 
     void OnCombatGetActiveEnemies(List<Enemy> enemies)

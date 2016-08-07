@@ -90,10 +90,13 @@
     <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
     <Compile Include="Assets\Scripts\Controllers\EnemiesController.cs" />
     <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\MyEventManager.cs" />
     <Compile Include="Assets\Scripts\Data Collections\StringsLibrary.cs" />
     <Compile Include="Assets\Scripts\Editor Extensions\ReadOnlyAttribute.cs" />
     <Compile Include="Assets\Scripts\Enemies\Base Classes\Enemy.cs" />
     <Compile Include="Assets\Scripts\Enemies\Enemy Types\EnemyTest.cs" />
+    <Compile Include="Assets\Scripts\Event System\Messages.cs" />
+    <Compile Include="Assets\Scripts\Event System\Messenger.cs" />
     <Compile Include="Assets\Scripts\Hero\Hero.cs" />
     <Compile Include="Assets\Scripts\Hero\HeroSkills.cs" />
     <Compile Include="Assets\Scripts\Hero\Player.cs" />
@@ -104,6 +107,7 @@
     <Compile Include="Assets\Scripts\Interfaces\IActionButtonListener.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageDealer.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IEventNotifier.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IHasActionBar.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IKillable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IPausable.cs" />
@@ -122,6 +126,7 @@
     <Compile Include="Assets\Scripts\RPG System\Skills\Skill Creator\SkillCreator.cs" />
     <Compile Include="Assets\Scripts\Systems\RPGSystem.cs" />
     <Compile Include="Assets\Scripts\TestScripts\InstantiationTest.cs" />
+    <Compile Include="Assets\Scripts\TestScripts\MyDebugger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

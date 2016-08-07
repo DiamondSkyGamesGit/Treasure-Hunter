@@ -71,12 +71,12 @@ namespace HeroData {
         void OnEnable()
         {
             //Add myself to GameController active heroes?
-            CombatController.Instance.onBattleStateChanged += OnBattleStateChanged;
+            Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
         }
 
         void OnDisable()
         {
-            CombatController.Instance.onBattleStateChanged -= OnBattleStateChanged;
+            Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged);
         }
 
         void Update()
@@ -84,8 +84,11 @@ namespace HeroData {
             //Increment the ActionBar
             if (actionBarActive)
             {
+                
                 float temp = MyActionBar.CurrentValue < MyActionBar.Max ? MyActionBar.CurrentValue : MyActionBar.Max;
+                //float previouValue = MyActionBar.CurrentValue;
                 MyActionBar = new ActionBar(0f, 1f, temp + (speed * Time.deltaTime));
+               // bool fireOnActionBarFull = temp == MyActionBar.Max;
 
                 //if no player input have been given when action is ready, either
                 //do default hero action
@@ -100,16 +103,16 @@ namespace HeroData {
         /// <summary>
         /// Handles what to do in this script based on which Battlestate we're in
         /// </summary>
-        void OnBattleStateChanged(CombatController.BattleState battleState)
+        void OnBattleStateChanged(OnBattleStateChanged battleState)
         {
-            switch(battleState)
+            switch(battleState.currentBattleState)
             {
-                case (CombatController.BattleState.NORMAL_TIME_FLOW):
+                case (BattleState.NORMAL_TIME_FLOW):
                     //do cool stuff
                     actionState = ActionState.ACTION_BAR_CHARGING;
                     PauseMe(true);
                     break;
-                case (CombatController.BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
+                case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
                     PauseMe(false);
                     break;
             }

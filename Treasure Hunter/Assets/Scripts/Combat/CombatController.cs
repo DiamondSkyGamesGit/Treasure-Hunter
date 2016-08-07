@@ -3,6 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using HeroData;
 
+
+
+//global definition of BattleState
+public enum BattleState
+{
+    NOT_COMBAT,
+    COMBAT_INTRODUCTION,
+    NORMAL_TIME_FLOW,
+    PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
+    PLAYER_WIN,
+    PLAYER_LOOSE
+}
+
+
 /// <summary>
 /// This class holds the current combat state
 /// Handles pausing of other scripts when the player is in PlayerInputMode
@@ -23,44 +37,21 @@ public class CombatController : MonoBehaviour {
     //The active Heroes
     public List<Hero> activeHeroes = new List<Hero>();
 
-    // public IDamageDealer[] combatants;
+    //??? how should i do this
     public List<IDamageDealer> combatants = new List<IDamageDealer>();
     public List<Enemy> enemies = new List<Enemy>();
-    // i need to know whose turn it is
 
+    #region ----My Messages----
 
-    #region ----Events and Delegates----
+    public OnCombatInitialized onCombatInitialized = new OnCombatInitialized();
+    public OnCombatActiveHeroes onCombatActiveHeroes = new OnCombatActiveHeroes();
+    public OnCombatActiveEnemies onCombatActiveEnemies = new OnCombatActiveEnemies();
+    public OnBattleStateChanged onBattleStateChanged = new OnBattleStateChanged();
 
-    public delegate void OnCombatActiveHeroes(List<Hero> activeHeroes);
-    public event OnCombatActiveHeroes onCombatActiveHeroes;
-
-    //if hero party changes during combat this must be fired to subs. Ensure to desubscribe listeners to the previous active heroes list
-    public delegate void OnCombatActiveHeroesChanged(List<Hero> previousActiveHeroes, List<Hero> activeHeroes);
-    public event OnCombatActiveHeroesChanged onCombatActiveHeroesChanged;
-
-
-    //fired whenever amount of enemies change as well
-    public delegate void OnCombatActiveEnemies(List<Enemy> enemyList);
-    public event OnCombatActiveEnemies onCombatActiveEnemies;
-
-    public delegate void OnCombatInitiated();
-    public event OnCombatInitiated onCombatInitiated;
-
-    public delegate void OnBattleStateChanged(BattleState combatState);
-    public event OnBattleStateChanged onBattleStateChanged;
     #endregion
 
-
     #region ----BattleState State Machine------
-    public enum BattleState
-    {
-        NOT_COMBAT,
-        COMBAT_INTRODUCTION,
-        NORMAL_TIME_FLOW,
-        PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
-        PLAYER_WIN,
-        PLAYER_LOOSE
-    }
+
 
     public BattleState previousBattleState;
     public BattleState currentBattleState;
@@ -79,6 +70,7 @@ public class CombatController : MonoBehaviour {
     }
 
 	void Start () {
+
 
 	}
 	
@@ -102,16 +94,17 @@ public class CombatController : MonoBehaviour {
         theBattleCanvas.SetActive(true);
 
         //REMOVE LATER callback to subs whois active heroes
+        //Can change later to Query Message
         activeHeroes = GameController.Instance.activeHeroes;
-       // onCombatActiveHeroes(activeHeroes); might get null ref because no subs yet
+        onCombatActiveHeroes.activeHeroes = activeHeroes;
+        Messenger.Dispatch(onCombatActiveHeroes);
 
         //tell all listeners that combat is now initiated
-        if (onCombatInitiated != null)
-            onCombatInitiated();
+        Messenger.Dispatch(onCombatInitialized);
 
         //Callback to subscribers a list of the active enemies
-        if(onCombatActiveEnemies != null)
-            onCombatActiveEnemies(activeEnemies);
+        onCombatActiveEnemies.activeEnemies = activeEnemies;
+        Messenger.Dispatch(onCombatActiveEnemies);
 
         //change BattleState
         SetCurrentBattleState(BattleState.COMBAT_INTRODUCTION);
@@ -146,11 +139,17 @@ public class CombatController : MonoBehaviour {
     /// Fires event onBattleStateChanged
     /// </summary>
     /// <param name="curBattleState"></param>
-    public void SetCurrentBattleState(BattleState curBattleState)
+    public void SetCurrentBattleState(BattleState newBattleState)
     {
+        //previous battleState, might wanna stop having a local var
         previousBattleState = currentBattleState;
-        currentBattleState = curBattleState;
-        onBattleStateChanged(currentBattleState);
+        onBattleStateChanged.previousBattleState = currentBattleState;
+
+        //set the now current battlestate
+        onBattleStateChanged.currentBattleState = newBattleState;
+        currentBattleState = newBattleState;
+
+        Messenger.Dispatch(onBattleStateChanged);
         Debug.Log("Current Battlestate = " + currentBattleState);
     }
 

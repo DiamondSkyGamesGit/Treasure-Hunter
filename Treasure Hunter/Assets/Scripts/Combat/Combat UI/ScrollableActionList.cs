@@ -43,7 +43,6 @@ public class ScrollableActionList : MonoBehaviour {
         //-- Destroy my current actionButtons before adding new ones
         DestroyActionButtons();
         contentArea.localPosition = Vector3.zero;
-        Debug.Log("OnCombatUI blabla in ScrollableList is called");
 
         for(int i = 0; i < data.actionButtons.Count; i++)
         {
@@ -59,6 +58,8 @@ public class ScrollableActionList : MonoBehaviour {
         {
             foreach (var g in actionButtons)
                 Destroy(g.gameObject);
+
+            actionButtons.Clear();
         }
         else
         {

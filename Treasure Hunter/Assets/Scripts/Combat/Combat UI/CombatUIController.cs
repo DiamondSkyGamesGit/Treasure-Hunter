@@ -37,6 +37,8 @@ public class CombatUIController : MonoBehaviour {
     public SelectedAction previousSelectedAction;
     public SelectedAction selectedAction;
 
+    public Skill currentSkillSelected;
+
     public bool showDebugLogs = false;
 
 
@@ -101,6 +103,10 @@ public class CombatUIController : MonoBehaviour {
                 break;
         }
     }
+
+    #endregion
+
+    #region --//-- Methods concerning Heroes and HeroData --\\--
 
     void SetActiveHeroByInputDirection(OnCombatUIChangeActiveHero data)
     {
@@ -180,6 +186,12 @@ public class CombatUIController : MonoBehaviour {
 
             case SelectedAction.CHANGE_ACTIVE_HERO:
                 //-- Should handle the Dispatch of the new active hero?
+                //dont know if i need this state..
+                //I don't think it should be it's own state because the event is already handled as a custom handler for this type of event
+                //and for now changing hero does not change anything in the game since they share default actions
+                //BUT: if they're inside another GUI than the default Actions window then..
+                //in that case need to populate GUI OnActiveHeroChanged which kinda makes sense, just need to decide when that is allowed
+                //in the state machine
                 break;
         }
     }
@@ -219,7 +231,6 @@ public class CombatUIController : MonoBehaviour {
 
     public void DisablePlayerInputUI()
     {
-        scrollableActionList.DestroyActionButtons();
         scrollableActionList.gameObject.SetActive(false);
     }
 
@@ -260,6 +271,8 @@ public class CombatUIController : MonoBehaviour {
 
                     //-- Check which targetType the ITargetable was, dispatch events accordingly
                     DispatchSelectedTargetByTargetType(onActionBtnClicked.target.targetType);
+                    activeHero.UseSkillOnTarget(currentSkillSelected, onActionBtnClicked.target);
+                    DisablePlayerInputUI();
                 }
                 else
                 {
@@ -272,6 +285,7 @@ public class CombatUIController : MonoBehaviour {
 
     void DispatchSkillUsed(Skill theSkill)
     {
+        currentSkillSelected = theSkill;
         OnCombatUISkillSelected skillChosenMessageData = new OnCombatUISkillSelected();
         skillChosenMessageData.theSkill = theSkill;
         Messenger.Dispatch(skillChosenMessageData);

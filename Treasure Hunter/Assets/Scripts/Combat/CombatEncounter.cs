@@ -35,7 +35,6 @@ public class CombatEncounter : MonoBehaviour {
     {
         Debug.Log("Combat initiated");
         foreach (var e in enemies) {
-            CombatController.Instance.combatants.Add(e);
             CombatController.Instance.enemies.Add(e);
         }
 

@@ -119,6 +119,11 @@ public class OnSkillUseOnTarget : Message
     public ITargetable theTarget;
 }
 
+public class OnEnemyDie : Message
+{
+    public Enemy theEnemy;
+}
+
 
 
 

@@ -7,6 +7,9 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
 
     private Renderer myRenderer;
 
+    public Transform myTransform;
+    public Transform MyTransform { get { return myTransform; } set { myTransform = value; } }
+
     [SerializeField]
     private string enemyName;
     public string EnemyName { get { return enemyName; }protected set { enemyName = value; } }
@@ -26,7 +29,7 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
     private bool isTargeted = false;
     public bool IsTargeted { get { return IsTargeted; } set { if (IsTargetable) IsTargeted = value; else IsTargeted = false; } }
 
-    private TargetType _targetType;
+    public TargetType _targetType;
     public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
 
     public Color defaultColor;
@@ -41,10 +44,11 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
         defaultColor = myRenderer.material.color;//might have to be done in child classes, unsure, depends on how i use materials on different enemies
     }
 
-    void Start()
+    protected virtual void Start()
     {
 
         _targetType = TargetType.ENEMY;
+        MyTransform = GetComponent<Transform>();
     }
 
 

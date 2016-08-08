@@ -8,7 +8,7 @@ public enum TargetType
     NEUTRAL
 }
 
-public interface ITargetable : IDamageable {
+public interface ITargetable :  IDamageable {
 
     //All implementers of this script must have the possibility to be targeted
     //what does that mean?
@@ -19,4 +19,5 @@ public interface ITargetable : IDamageable {
     bool IsTargetable { get; set; }
     bool IsTargeted { get; set; }
     TargetType targetType { get; set; }
+    Transform MyTransform { get; set; }
 }

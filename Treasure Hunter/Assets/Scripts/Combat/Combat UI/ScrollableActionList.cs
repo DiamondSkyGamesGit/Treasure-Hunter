@@ -40,12 +40,15 @@ public class ScrollableActionList : MonoBehaviour {
     /// </summary>
     void OnCombatUIDisplayActionButtons(OnCombatUIDisplayActionButtons data)
     {
-        //Destroy my current actionButtons before adding new ones
+        //-- Destroy my current actionButtons before adding new ones
         DestroyActionButtons();
+        contentArea.localPosition = Vector3.zero;
+        Debug.Log("OnCombatUI blabla in ScrollableList is called");
+
         for(int i = 0; i < data.actionButtons.Count; i++)
         {
             data.actionButtons[i].transform.SetParent(contentArea.transform, false);
-            //add to my list
+            //-- Add to my list
             actionButtons.Add(data.actionButtons[i]);
         }
     }

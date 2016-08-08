@@ -13,12 +13,23 @@ public enum BattleState
 //The selected Player Action when dealing with Combat UI
 public enum SelectedAction
 {
-    NOT_SELECTED_YET,
+    NOT_COMBAT,
+    NOT_SELECTED_YET_DISPLAY_DEFAULT_ACTIONS,
     ATTACK,
     MAGIC,
     ITEM,
     SELECT_TARGET,
     SELECTED_TARGET_ENEMY,
     SELECTED_TARGET_FRIENDLY
+}
+
+/// <summary>
+/// Add to this as skills grow?
+/// </summary>
+public enum SkillType
+{
+    ATTACK,
+    MAGIC,
+    ITEM
 }
 

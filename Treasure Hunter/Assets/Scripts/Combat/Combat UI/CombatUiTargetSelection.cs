@@ -9,10 +9,11 @@ using UnityEngine.UI;
 /// </summary>
 public class CombatUiTargetSelection : CombatUI {
 
-    public ScrollableActionList scrollableActionList;
-    public SelectTargetButton actionButtonPrefab;
     public List<Enemy> activeEnemies = new List<Enemy>();
 
+    void Start()
+    {
+    }
 
     void OnEnable()
     {
@@ -39,28 +40,29 @@ public class CombatUiTargetSelection : CombatUI {
 
     void CreateTargetingButtonsAndDispatch()
     {
+        Debug.Log("I was called in COmbatUITArgetSelection");
         //-- Temp variable to dispatch with messenger object
-        List<ActionButton> actionButtons = new List<ActionButton>();
+        List<ActionButton> tempActionBtn = new List<ActionButton>();
 
         //-- foreach enemy, instantiate actionButtonPrefab and set text. 
         //-- Note! Their positioning is handled by reciever of event
         //-- Note! activeEnemies is updated whenever the amount of enemies change in battle
         for (int i = 0; i < activeEnemies.Count; i++)
         {
-            SelectTargetButton s = Instantiate<SelectTargetButton>(actionButtonPrefab);
-            actionButtons.Add(s);
+            //-- NOTE! Hardcoded value of instantiation here!! Change if logic at a later point needs different TargetSelectionButtons
+            SelectTargetButton s = Instantiate(actionButtonsPrefabs[0]) as SelectTargetButton;
             //-- Set the text of the Button object to name of enemy + number
             s.myButton.GetComponentInChildren<Text>().text = activeEnemies[i].EnemyName + " " + i;
             //-- Set min height of the Layout component
             s.myLayoutElement.minHeight = 60f;
             //-- A selectTarget button has a target associated with the button
             s.myTarget = activeEnemies[i];
-            actionButtons.Add(s);
+            tempActionBtn.Add(s);
 
         }
         //-- Create Message object to dispatch to listeners
         OnCombatUIDisplayActionButtons temp = new OnCombatUIDisplayActionButtons();
-        temp.actionButtons = actionButtons;
+        temp.actionButtons = tempActionBtn;
         Messenger.Dispatch(temp);
     }
 

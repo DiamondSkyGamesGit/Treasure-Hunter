@@ -17,5 +17,6 @@ public interface ITargetable : IDamageable {
     //so that later, listeners can implement something to do with that target, and possibly the button
     //a button might also have the sideEffect of CanTargetHeroes?
     bool IsTargetable { get; set; }
+    bool IsTargeted { get; set; }
     TargetType targetType { get; set; }
 }

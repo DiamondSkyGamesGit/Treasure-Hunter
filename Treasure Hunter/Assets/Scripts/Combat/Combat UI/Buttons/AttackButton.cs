@@ -4,7 +4,6 @@ using System;
 using UnityEngine.Events;
 using SkillSystem;
 
-[System.Serializable]
 public class AttackButton : ActionButton//, //IActionButtonEventPublisher
 {
 
@@ -30,13 +29,13 @@ public class AttackButton : ActionButton//, //IActionButtonEventPublisher
     protected override void AddButtonListener()
     {
 
-        myButton.onClick.AddListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.ATTACK)));
+        myButton.onClick.AddListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION, mySkill)));
     }
 
     protected override void RemoveButtonListener()
     {
         if (myButton.onClick != null)
-            myButton.onClick.RemoveListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.ATTACK)));
+            myButton.onClick.RemoveListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION, mySkill)));
     }
 
     //might not need DoActions now....

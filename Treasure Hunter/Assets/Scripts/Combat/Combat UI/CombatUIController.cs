@@ -22,7 +22,7 @@ public class CombatUIController : MonoBehaviour {
     public ScrollableActionList scrollableActionList;
     public Text activeHeroNameTextObj;
 
-    public CombatUIDefaultActions defaultActions;
+    //public CombatUIDefaultActions defaultActions;
 
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
@@ -67,12 +67,6 @@ public class CombatUIController : MonoBehaviour {
     #endregion
 
 
-    List<ActionButton> GetDefaultActionButtons()
-    {
-        return defaultActions.actionButtons;
-    }
-
-
     #region --//-- On Battle State Changed Methods --\\--
 
     public void OnBattleStateChanged(OnBattleStateChanged newBattleState)
@@ -89,10 +83,6 @@ public class CombatUIController : MonoBehaviour {
                     foreach (var v in activeHeroesSorted)
                         Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
                 }
-
-                //-- Set currentActionButtons
-                currentActionButtons = GetDefaultActionButtons();
-
                 //-- Display scrollableActionList --
                 EnablePlayerInputUI(activeHero);
 
@@ -109,8 +99,6 @@ public class CombatUIController : MonoBehaviour {
     /// <summary>
     /// Sort incoming list by highest actionBarValue as first
     /// </summary>
-    /// <param name="heroes"></param>
-    /// <returns></returns>
     private List<Hero> GetSortedHeroListByActionBarValue(List<Hero> heroes)
     {
         //don't need to sort, just orderBy
@@ -129,13 +117,12 @@ public class CombatUIController : MonoBehaviour {
     {
         switch (data.selectedAction)
         {
-            case (SelectedAction.NOT_SELECTED_YET):
+            case (SelectedAction.NOT_SELECTED_YET_DISPLAY_DEFAULT_ACTIONS):
 
                 break;
 
             case (SelectedAction.ATTACK):
-                //destroy current actionbuttons in scrollableList
-                //Display Target Selection UI
+                SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
                 break;
             case (SelectedAction.MAGIC):
 
@@ -147,6 +134,7 @@ public class CombatUIController : MonoBehaviour {
             case (SelectedAction.SELECT_TARGET):
 
                 break;
+
             case SelectedAction.SELECTED_TARGET_FRIENDLY:
 
                 break;
@@ -156,6 +144,10 @@ public class CombatUIController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Which SelectedAction state should we enter?
+    /// Dispatches OnCombatUISelectedAction object, containing previous and current SelectedAction
+    /// </summary>
     public void SetCurrentSelectedAction(SelectedAction _currentSelectedAction)
     {
         OnCombatUISelectedAction temp = new OnCombatUISelectedAction();
@@ -181,8 +173,7 @@ public class CombatUIController : MonoBehaviour {
         activeHeroNameTextObj.text = theHero.heroName;
 
         //-- Get available actions from Hero and display accordingly in ScrollableActionList?
-
-        scrollableActionList.InstantiateAndDisplayItems(currentActionButtons);
+        SetCurrentSelectedAction(SelectedAction.NOT_SELECTED_YET_DISPLAY_DEFAULT_ACTIONS);
 
     }
 
@@ -198,11 +189,40 @@ public class CombatUIController : MonoBehaviour {
     {
         Debug.Log("Got tha message! Button clicked was of ButtonType " + onActionBtnClicked.actionButtonType);
         if (onActionBtnClicked.target != null) Debug.Log("The Target was of type " + onActionBtnClicked.target);
+
+        //-- Check which buttonType was clicked and handle event dispatches accordingly
         switch (onActionBtnClicked.actionButtonType)
         {
-            case ActionButton.ActionButtonType.ATTACK:
+            //-- If the buttonType is DirectAction, choose target for the given skill directly after
+            case ActionButton.ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION:
+                if(onActionBtnClicked.theSkill != null)
+                {
+                    //Dispatch the skill used. The button itself could do it, but it's nice to keep it in One Statemachine!
+                    OnCombatUISkillSelected skillChosenMessageData = new OnCombatUISkillSelected();
+                    skillChosenMessageData.theSkill = onActionBtnClicked.theSkill;
+                    Messenger.Dispatch(skillChosenMessageData);
+
+                    //-- Then Display Targeting List
+                }
                 SetCurrentSelectedAction(SelectedAction.ATTACK);
-                //display target selection
+                break;
+            
+            //-- If the button is SkillSelector - choose a skill then display the possible Skills to use based on activeHero in GUI
+            case ActionButton.ActionButtonType.SKILL_SELECTOR_CHOOSE_SKILL_FROM_LIST:
+
+                break;
+
+            //-- If the button is a Target Selector, Dispatch the target with the Skill to use
+            case ActionButton.ActionButtonType.TARGET_SELECTOR:
+                if(onActionBtnClicked.target != null) {
+
+                    //-- Check which targetType the ITargetable was, dispatch events accordingly
+                    DispatchSelectedTargetByTargetType(onActionBtnClicked.target.targetType);
+                }
+                else
+                {
+                    Debug.LogWarning("The action did not have a Target! All SelectTarget Actions must have a Target!!");
+                }
                 break;
 
         }
@@ -212,7 +232,19 @@ public class CombatUIController : MonoBehaviour {
         //next Action is Select Target
     }
 
+    void DispatchSelectedTargetByTargetType(TargetType targetType)
+    {
+        switch (targetType)
+        {
+            case TargetType.ENEMY:
 
+                break;
+
+            case TargetType.HERO:
+
+                break;
+        }
+    }
 
 
 }

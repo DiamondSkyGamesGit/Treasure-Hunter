@@ -10,6 +10,6 @@ using System.Collections.Generic;
 public class CombatUI : MonoBehaviour {
 
     //each instance has their own list of actionButtons
-    public List<ActionButton> actionButtons = new List<ActionButton>();
+    public List<ActionButton> actionButtonsPrefabs = new List<ActionButton>();
 
 }

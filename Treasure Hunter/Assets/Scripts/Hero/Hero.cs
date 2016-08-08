@@ -8,7 +8,6 @@ namespace HeroData {
     /// Contains all hero data for the current hero
     /// </summary>
     [RequireComponent(typeof(HeroSkills))]
-
     [System.Serializable]
     public class Hero : MonoBehaviour, IPausable, IHasActionBar, ITargetable, IDamageable, IDamageDealer {
 
@@ -30,6 +29,9 @@ namespace HeroData {
 
         private bool isTargetable = true;
         public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
+
+        private bool isTargeted = false;
+        public bool IsTargeted { get { return isTargeted; } set { if (IsTargetable) isTargeted = value; else isTargeted = false; } }
 
         private TargetType _targetType;
         public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
@@ -65,7 +67,7 @@ namespace HeroData {
             MyActionBar = new ActionBar(0f, 1f, UnityEngine.Random.Range(0, 0.3f));
 
             //-- initialize targetType --
-            _targetType = TargetType.HERO;
+            targetType = TargetType.HERO;
 	    }
 
         void OnEnable()

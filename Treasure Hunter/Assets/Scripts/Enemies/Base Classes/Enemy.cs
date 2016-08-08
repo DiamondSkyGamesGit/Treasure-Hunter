@@ -23,6 +23,9 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
     private bool isTargetable = true;
     public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
 
+    private bool isTargeted = false;
+    public bool IsTargeted { get { return IsTargeted; } set { if (IsTargetable) IsTargeted = value; else IsTargeted = false; } }
+
     private TargetType _targetType;
     public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
 

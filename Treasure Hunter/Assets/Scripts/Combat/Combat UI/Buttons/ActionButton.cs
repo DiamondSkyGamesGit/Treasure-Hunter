@@ -9,11 +9,21 @@ public abstract class ActionButton : MonoBehaviour {
 
     public Button myButton;
     public LayoutElement myLayoutElement;
+    public Skill mySkill;
 
+    //Can this Enum just be 2 things? Target Selector and UseSkill, then i don't need to send as much stuff in Messages
     public enum ActionButtonType
     {
-        ATTACK,
-        SELECT_TARGET
+        //-- Skill selector direct action means - Character chooses skill and then target, with no selection menu
+        //-- A Magic Skill Action Button is also a Direct Action that handles targeting directly after it is pressed
+
+        //--Skill selector choose skill from list means - a skill must be chosen from available skills from a list
+        //-- That skill Action Button is a Direct Action
+
+
+        SKILL_SELECTOR_DIRECT_ACTION,
+        SKILL_SELECTOR_CHOOSE_SKILL_FROM_LIST,
+        TARGET_SELECTOR
     }
 
     public ActionButtonType actionButtonType;
@@ -49,6 +59,23 @@ public abstract class ActionButton : MonoBehaviour {
         OnActionButtonClick temp = new OnActionButtonClick();
         temp.actionButtonType = actionBtnType;
         temp.target = target;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, Skill skillToUse)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.theSkill = skillToUse;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, ITargetable target, Skill skillToUse)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.target = target;
+        temp.theSkill = skillToUse;
         return temp;
     }
 

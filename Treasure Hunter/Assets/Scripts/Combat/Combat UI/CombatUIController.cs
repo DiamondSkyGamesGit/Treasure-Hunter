@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using UnityEngine.UI;
 using HeroData;
+using SkillSystem;
 
 
 /// <summary>
@@ -26,11 +27,12 @@ public class CombatUIController : MonoBehaviour {
 
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
-    //if i am to use activeHero it is very important to update active hero correctly after button listeners have been assigned to the hero's buttons
+
+    //used to let the player scroll through the list as a round-robin using Input.GetAxis from PlayerCombatInput
+    int activeHeroesSortedIndex = 0;
+
     //might not be a good system
     public Hero activeHero;
-    public List<ActionButton> currentActionButtons = new List<ActionButton>();
-
 
     public SelectedAction previousSelectedAction;
     public SelectedAction selectedAction;
@@ -54,6 +56,9 @@ public class CombatUIController : MonoBehaviour {
         Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
         Messenger.AddListener<OnActionButtonClick>(OnActionButtonClicked);
         Messenger.AddListener<OnCombatUISelectedAction>(OnSelectedAction);
+        Messenger.AddListener<OnCombatUIChangeActiveHero>(SetActiveHeroByInputDirection);
+        //add listener to OnActiveHeroChanged as well
+
 
     }
     void OnDisable()
@@ -61,6 +66,7 @@ public class CombatUIController : MonoBehaviour {
         Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged);
         Messenger.RemoveListener<OnActionButtonClick>(OnActionButtonClicked);
         Messenger.RemoveListener<OnCombatUISelectedAction>(OnSelectedAction);
+        Messenger.RemoveListener<OnCombatUIChangeActiveHero>(SetActiveHeroByInputDirection);
 
     }
 
@@ -96,6 +102,40 @@ public class CombatUIController : MonoBehaviour {
         }
     }
 
+    void SetActiveHeroByInputDirection(OnCombatUIChangeActiveHero data)
+    {
+        switch (data.btnDirectionOnInput)
+        {
+            case CombatUIScrollDirection.RIGHT:
+
+                activeHeroesSortedIndex++;
+                if (activeHeroesSortedIndex > activeHeroesSorted.Count - 1)
+                    activeHeroesSortedIndex = 0;
+                activeHero = activeHeroesSorted[activeHeroesSortedIndex];
+                OnCombatUIActiveHero temp = new OnCombatUIActiveHero();
+                temp.theActiveHero = activeHero;
+                Messenger.Dispatch(temp);
+                SetActiveHeroPortraitData();
+
+                break;
+            case CombatUIScrollDirection.LEFT:
+                activeHeroesSortedIndex--;
+                if (activeHeroesSortedIndex < 0)
+                    activeHeroesSortedIndex = activeHeroesSorted.Count - 1;
+                activeHero = activeHeroesSorted[activeHeroesSortedIndex];
+                temp = new OnCombatUIActiveHero();
+                temp.theActiveHero = activeHero;
+                Messenger.Dispatch(temp);
+                SetActiveHeroPortraitData();
+                break;
+        }
+    }
+
+    void SetActiveHeroPortraitData()
+    {
+        activeHeroNameTextObj.text = activeHero.heroName;
+    }
+
     /// <summary>
     /// Sort incoming list by highest actionBarValue as first
     /// </summary>
@@ -113,6 +153,8 @@ public class CombatUIController : MonoBehaviour {
 
     #region --//--  Methods Handling Which UI components to show --\\--
 
+    //-- Do i need this? Think i do, even though im running 2 statemachines in the same script
+    //- One handles what to do with button clicks, this handles which GUI elements to display, and is what other scripts listen to
     public void OnSelectedAction(OnCombatUISelectedAction data)
     {
         switch (data.selectedAction)
@@ -121,17 +163,11 @@ public class CombatUIController : MonoBehaviour {
 
                 break;
 
-            case (SelectedAction.ATTACK):
-                SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
-                break;
-            case (SelectedAction.MAGIC):
-
-                break;
-            case (SelectedAction.ITEM):
-
-                break;
-
             case (SelectedAction.SELECT_TARGET):
+                //well listener already has gotten this message if the stateMachine has entered here so don't need to dispatch from here
+                break;
+
+            case (SelectedAction.SELECT_SKILL_TO_USE):
 
                 break;
 
@@ -140,6 +176,10 @@ public class CombatUIController : MonoBehaviour {
                 break;
             case SelectedAction.SELECTED_TARGET_ENEMY:
 
+                break;
+
+            case SelectedAction.CHANGE_ACTIVE_HERO:
+                //-- Should handle the Dispatch of the new active hero?
                 break;
         }
     }
@@ -195,16 +235,18 @@ public class CombatUIController : MonoBehaviour {
         {
             //-- If the buttonType is DirectAction, choose target for the given skill directly after
             case ActionButton.ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION:
-                if(onActionBtnClicked.theSkill != null)
-                {
-                    //Dispatch the skill used. The button itself could do it, but it's nice to keep it in One Statemachine!
-                    OnCombatUISkillSelected skillChosenMessageData = new OnCombatUISkillSelected();
-                    skillChosenMessageData.theSkill = onActionBtnClicked.theSkill;
-                    Messenger.Dispatch(skillChosenMessageData);
 
-                    //-- Then Display Targeting List
-                }
-                SetCurrentSelectedAction(SelectedAction.ATTACK);
+                    if (onActionBtnClicked.theSkill != null)
+                    {
+                        //Dispatch the skill used. The ActionButton itself could do it, but it's nice to keep it in One Statemachine!
+                        DispatchSkillUsed(onActionBtnClicked.theSkill);
+                    
+                        //-- Set SelectedAction to display targeting list
+                        SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
+                    }
+                    else
+                        Debug.LogWarning("The button you pressed had no Skill associated!");
+
                 break;
             
             //-- If the button is SkillSelector - choose a skill then display the possible Skills to use based on activeHero in GUI
@@ -226,10 +268,13 @@ public class CombatUIController : MonoBehaviour {
                 break;
 
         }
-        //so now we got here.. what to do?
-        //should change state somewhere, since we now have chosen an Action
-        //if we have pressed Attack the current Action selected is Attack
-        //next Action is Select Target
+    }
+
+    void DispatchSkillUsed(Skill theSkill)
+    {
+        OnCombatUISkillSelected skillChosenMessageData = new OnCombatUISkillSelected();
+        skillChosenMessageData.theSkill = theSkill;
+        Messenger.Dispatch(skillChosenMessageData);
     }
 
     void DispatchSelectedTargetByTargetType(TargetType targetType)

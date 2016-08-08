@@ -20,6 +20,7 @@ public class OnCombatActiveEnemies : Message
 
 /// <summary>
 /// Dispatched when List of Heroes active in battle at current time is changed
+/// Should be considered as the active party
 /// </summary>
 public class OnCombatActiveHeroes : Message
 {
@@ -35,6 +36,8 @@ public class OnBattleStateChanged : Message
     public BattleState currentBattleState;
 }
 
+
+
 /// <summary>
 /// Dispatched when an "ActionButton" is clicked in the Combat GUI. 
 /// Variables may be --Null-- when dispatched! Listener must check for the information they expect depending on context
@@ -46,6 +49,22 @@ public class OnActionButtonClick : Message
     public Skill theSkill;
     //Add more here?
 }
+
+/// <summary>
+/// Dispatched when the Active hero changes in Combat GUI.
+/// The active Hero is the character whose actions are represented in the GUI
+/// The player may choose which Hero is Active in GUI by pressing Left or Right on DPAD / keyboard
+/// </summary>
+public class OnCombatUIActiveHero :Message
+{
+    public Hero theActiveHero;
+}
+
+public class OnCombatUIChangeActiveHero : Message
+{
+    public CombatUIScrollDirection btnDirectionOnInput;
+}
+
 
 /// <summary>
 /// Dispatched when ActionButtons are ready to be instantiated and placed in the GUI.

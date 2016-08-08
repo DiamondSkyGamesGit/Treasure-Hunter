@@ -71,6 +71,19 @@ public class PlayerCombatInput : MonoBehaviour {
             {
                 CombatController.Instance.OnPlayerInputPauseIPausables(false);
             }
+
+            if(Input.GetKeyUp(KeyCode.X))
+            {
+                OnCombatUIChangeActiveHero temp = new OnCombatUIChangeActiveHero();
+                temp.btnDirectionOnInput = CombatUIScrollDirection.RIGHT;
+                Messenger.Dispatch(temp);
+            }
+            if (Input.GetKeyUp(KeyCode.Z))
+            {
+                OnCombatUIChangeActiveHero temp = new OnCombatUIChangeActiveHero();
+                temp.btnDirectionOnInput = CombatUIScrollDirection.LEFT;
+                Messenger.Dispatch(temp);
+            }
         }
     }
 

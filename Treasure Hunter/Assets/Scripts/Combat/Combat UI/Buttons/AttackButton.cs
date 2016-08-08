@@ -9,6 +9,11 @@ public class AttackButton : ActionButton//, //IActionButtonEventPublisher
 
     //public override event OnActionButtonClick onActionButtonClick;
 
+    void Start()
+    {
+
+    }
+
     protected override void OnEnable()
     {
         //unfortunately, children of ActionButton must subscribe to onClick events, can't be called from base class....

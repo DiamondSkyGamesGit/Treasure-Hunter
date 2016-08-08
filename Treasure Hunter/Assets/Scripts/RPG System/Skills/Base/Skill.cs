@@ -7,7 +7,7 @@ namespace SkillSystem {
     /// The base class for all skills. 
     /// </summary>
     [System.Serializable]
-    public abstract class Skill : ISkill {
+    public abstract class Skill: MonoBehaviour, ISkill {
 
         //does it need to be a monobehavior?
         //if is monobehavior, can create alot of skill prefabs that are empty game objects that are instantiated
@@ -22,14 +22,16 @@ namespace SkillSystem {
         /// is "equippable" on a hero character
         /// </summary>
         /// 
-        [SerializeField][ReadOnly]
+        [SerializeField]//[ReadOnly]
         string skillName;
         public string SkillName { get { return skillName; } }
+
+        public float baseDamage;
 
         //A cast time of 0 means: instant cast when attack is done
         //A cast time > 0 means: the Action is Cast when the castTimer >= castTime
         [SerializeField]
-        [ReadOnly]
+        //[ReadOnly]
         float castTime;
         public float CastTime { get { return castTime; } }
 

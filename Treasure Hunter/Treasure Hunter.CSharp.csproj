@@ -103,8 +103,6 @@
     <Compile Include="Assets\Scripts\Hero\PlayerCombatInput.cs" />
     <Compile Include="Assets\Scripts\Hero\PlayerInventory.cs" />
     <Compile Include="Assets\Scripts\Hero\SkillDatabase.cs" />
-    <Compile Include="Assets\Scripts\Interfaces\IActionButtonEventPublisher.cs" />
-    <Compile Include="Assets\Scripts\Interfaces\IActionButtonListener.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageDealer.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamageable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IEventNotifier.cs" />
@@ -115,6 +113,7 @@
     <Compile Include="Assets\Scripts\Interfaces\IUIAction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\BaseClass\Weapon.cs" />
     <Compile Include="Assets\Scripts\Movement\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Public Enums\Public Enums.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Base\MagicSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Base\PassiveSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Base\PhysicalSkill.cs" />

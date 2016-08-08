@@ -17,7 +17,7 @@ using HeroData;
 /// When onCombatStateChanged.CombatState == PLAYERINPUT..., THEN show relevant UI for that Hero
 /// 
 /// </summary>
-public class CombatUIController : MonoBehaviour, IActionButtonListener {
+public class CombatUIController : MonoBehaviour {
     
     public ScrollableActionList scrollableActionList;
     public Text activeHeroNameTextObj;
@@ -31,20 +31,9 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
     public Hero activeHero;
     public List<ActionButton> currentActionButtons = new List<ActionButton>();
 
-    public enum SelectedAction
-    {
-        NOT_SELECTED_YET,
-        ATTACK,
-        MAGIC,
-        ITEM,
-        SELECT_TARGET_ENEMY
-    }
 
     public SelectedAction previousSelectedAction;
     public SelectedAction selectedAction;
-
-    public delegate void OnSelectedActionChanged(SelectedAction currentAction);
-    public event OnSelectedActionChanged onSelectedActionChanged;
 
     public bool showDebugLogs = false;
 
@@ -63,47 +52,26 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
             activeHero = GameController.Instance.activeHeroes[0];
 
         Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
-        //??
-        onSelectedActionChanged += OnSelectionChange;
+        Messenger.AddListener<OnActionButtonClick>(OnActionButtonClicked);
+        Messenger.AddListener<OnCombatUISelectedAction>(OnSelectedAction);
 
     }
     void OnDisable()
     {
         Messenger.RemoveListener<OnBattleStateChanged>(OnBattleStateChanged);
-        //??
-        onSelectedActionChanged -= OnSelectionChange;
+        Messenger.RemoveListener<OnActionButtonClick>(OnActionButtonClicked);
+        Messenger.RemoveListener<OnCombatUISelectedAction>(OnSelectedAction);
 
     }
 
     #endregion
 
 
-    #region --//-- Add & Remove Listeners Methods --\\--
-
-    
     List<ActionButton> GetDefaultActionButtons()
     {
         return defaultActions.actionButtons;
     }
 
-    //hopefully it goes correctly to the right hero, not a problem with prefabs or shared vars or something
-    void AddButtonListeners(List<ActionButton> theActionButtons)
-    {
-        foreach(var v in theActionButtons)
-        {
-            v.onActionButtonClick += OnActionButtonClicked;
-        }
-    }
-
-    void RemoveButtonListeners(List<ActionButton> theActionButtons)
-    {
-        foreach(var v in theActionButtons)
-        {
-            v.onActionButtonClick -= OnActionButtonClicked;
-        }
-    }
-
-    #endregion
 
     #region --//-- On Battle State Changed Methods --\\--
 
@@ -148,25 +116,24 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
         //don't need to sort, just orderBy
         //heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
         heroes = heroes.OrderByDescending(x => x.MyActionBar.CurrentValue).ToList();
-        List<Hero> temp = new List<Hero>();
-        temp = heroes;
-        return temp;
+        //List<Hero> temp = new List<Hero>();
+       // temp = heroes;
+        return heroes;
     }
 
     #endregion
 
     #region --//--  Methods Handling Which UI components to show --\\--
 
-    public void OnSelectionChange(SelectedAction theNewSelectedAction)
+    public void OnSelectedAction(OnCombatUISelectedAction data)
     {
-        switch (theNewSelectedAction)
+        switch (data.selectedAction)
         {
             case (SelectedAction.NOT_SELECTED_YET):
 
                 break;
 
             case (SelectedAction.ATTACK):
-                //remove listeners
                 //destroy current actionbuttons in scrollableList
                 //Display Target Selection UI
                 break;
@@ -177,7 +144,13 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
                 break;
 
-            case (SelectedAction.SELECT_TARGET_ENEMY):
+            case (SelectedAction.SELECT_TARGET):
+
+                break;
+            case SelectedAction.SELECTED_TARGET_FRIENDLY:
+
+                break;
+            case SelectedAction.SELECTED_TARGET_ENEMY:
 
                 break;
         }
@@ -185,12 +158,19 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
 
     public void SetCurrentSelectedAction(SelectedAction _currentSelectedAction)
     {
+        OnCombatUISelectedAction temp = new OnCombatUISelectedAction();
+        //set previous state
         previousSelectedAction = selectedAction;
+        temp.previousSelectedAction = previousSelectedAction;
+
+        //set new currentState
         selectedAction = _currentSelectedAction;
-        if(onSelectedActionChanged != null)
-            onSelectedActionChanged(selectedAction);
+        temp.selectedAction = selectedAction;
+
+        //Fire event
+        Messenger.Dispatch(temp);
+        
     }
-    
 
     public void EnablePlayerInputUI(Hero theHero)
     {
@@ -200,29 +180,25 @@ public class CombatUIController : MonoBehaviour, IActionButtonListener {
         //-- Set textObject to represent HeroName
         activeHeroNameTextObj.text = theHero.heroName;
 
-        //-- Get available actions from Hero and display accordingly in ScrollableActionList
+        //-- Get available actions from Hero and display accordingly in ScrollableActionList?
 
         scrollableActionList.InstantiateAndDisplayItems(currentActionButtons);
-        //add listeners to the buttons
-        //CAN ONLY BE DONE AFTER INSTANTIATION OF THE FUUUUUUUUUCKING BUTTONS REMEMBER
-        AddButtonListeners(scrollableActionList.actionButtons);
+
     }
 
     public void DisablePlayerInputUI()
     {
-        RemoveButtonListeners(scrollableActionList.actionButtons);
-        //Destroy have to be called from outside so i can handle listeners from this class
         scrollableActionList.DestroyActionButtons();
         scrollableActionList.gameObject.SetActive(false);
     }
 
     #endregion
 
-    public void OnActionButtonClicked(ActionButton theButton, ITargetable theTarget)
+    public void OnActionButtonClicked(OnActionButtonClick onActionBtnClicked)
     {
-        Debug.Log("Got tha message! Button clicked was " + theButton.GetType() + " of ButtonType " + theButton.actionButtonType);
-        if (theTarget != null) Debug.Log("The Target was of type " + theTarget.targetType);
-        switch (theButton.actionButtonType)
+        Debug.Log("Got tha message! Button clicked was of ButtonType " + onActionBtnClicked.actionButtonType);
+        if (onActionBtnClicked.target != null) Debug.Log("The Target was of type " + onActionBtnClicked.target);
+        switch (onActionBtnClicked.actionButtonType)
         {
             case ActionButton.ActionButtonType.ATTACK:
                 SetCurrentSelectedAction(SelectedAction.ATTACK);

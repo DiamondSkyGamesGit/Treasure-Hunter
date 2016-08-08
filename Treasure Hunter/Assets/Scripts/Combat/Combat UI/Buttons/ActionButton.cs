@@ -5,11 +5,11 @@ using System;
 using SkillSystem;
 
 [System.Serializable]
-public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEventPublisher {
+public abstract class ActionButton : MonoBehaviour {
 
     public Button myButton;
     public LayoutElement myLayoutElement;
-    public event OnActionButtonClick onActionButtonClick;
+
     public enum ActionButtonType
     {
         ATTACK,
@@ -20,13 +20,6 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
 
     //add sprite icon
     //add text shown
-
-
-
-    public ActionButton()
-    {
-        Start();
-    }
 
 	// Use this for initialization
 	void Start () {
@@ -43,11 +36,25 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
     {
 
     }
-    
-    protected void PublishActionButtonClick(ActionButton theActionButton, ITargetable theTarget)
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType)
     {
-        if(onActionButtonClick != null)
-            onActionButtonClick(theActionButton, theTarget);
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, ITargetable target)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.target = target;
+        return temp;
+    }
+
+    protected void PublishActionButtonClick(OnActionButtonClick actionEvent)
+    {
+        Messenger.Dispatch(actionEvent);
     }
     
     protected abstract void AddButtonListener();

@@ -20,19 +20,35 @@ public class ScrollableActionList : MonoBehaviour {
 
     void OnEnable()
     {
-        actionButtons = new List<ActionButton>();
+        Messenger.AddListener<OnCombatUIDisplayActionButtons>(OnCombatUIDisplayActionButtons);
 
     }
 
     void OnDisable()
     {
         actionButtons.Clear();
+        Messenger.RemoveListener<OnCombatUIDisplayActionButtons>(OnCombatUIDisplayActionButtons);
     }
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    /// <summary>
+    /// Display the incoming buttons from OnCombatUIDisplayActionButtons in my list by setting their parent
+    /// </summary>
+    void OnCombatUIDisplayActionButtons(OnCombatUIDisplayActionButtons data)
+    {
+        //Destroy my current actionButtons before adding new ones
+        DestroyActionButtons();
+        for(int i = 0; i < data.actionButtons.Count; i++)
+        {
+            data.actionButtons[i].transform.SetParent(contentArea.transform, false);
+            //add to my list
+            actionButtons.Add(data.actionButtons[i]);
+        }
+    }
 
     public void DestroyActionButtons()
     {

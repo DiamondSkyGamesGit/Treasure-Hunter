@@ -24,12 +24,12 @@ public class SelectTargetButton : ActionButton//, IActionButtonEventPublisher
 
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => PublishActionButtonClick(this, myTarget));
+        myButton.onClick.AddListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SELECT_TARGET)));
     }
 
     protected override void RemoveButtonListener()
     {
-        myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, myTarget));
+        myButton.onClick.RemoveListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SELECT_TARGET)));
     }
 
     public override void DoAction()

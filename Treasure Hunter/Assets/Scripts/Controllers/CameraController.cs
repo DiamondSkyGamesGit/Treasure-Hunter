@@ -28,7 +28,6 @@ public class CameraController : MonoBehaviour {
     }
 
 
-
 	// Use this for initialization
 	void Start () {
         defaultCameraPosition = transform.position;
@@ -39,7 +38,7 @@ public class CameraController : MonoBehaviour {
 
     void OnEnable()
     {
-       
+
     }
 
     void OnDisable()

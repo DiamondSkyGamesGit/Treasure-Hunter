@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SkillSystem;
 using HeroData;
 using System;
-
+/*
 public class MyEventManager : MonoBehaviour {
 
     public static MyEventManager Instance = null;
@@ -51,3 +51,4 @@ public class MyEventManager : MonoBehaviour {
 
 
 }
+*/

@@ -24,17 +24,22 @@ public class AttackButton : ActionButton//, //IActionButtonEventPublisher
         RemoveButtonListener();
     }
 
+
+
     //Added these for safety in the future
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => PublishActionButtonClick(this, null));
+
+        myButton.onClick.AddListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.ATTACK)));
     }
 
     protected override void RemoveButtonListener()
     {
         if (myButton.onClick != null)
-            myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, null));
+            myButton.onClick.RemoveListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.ATTACK)));
     }
+
+    //might not need DoActions now....
 
     public override void DoAction()
     {

@@ -16,29 +16,58 @@ public class CombatUiTargetSelection : CombatUI {
 
     void OnEnable()
     {
-        MyEventManager.Instance.onCombatActiveEnemies += OnCombatGetActiveEnemies;
+        Messenger.AddListener<OnCombatActiveEnemies>(OnCombatGetActiveEnemies);
+        Messenger.AddListener<OnCombatUISelectedAction>(OnCombatUISelectedAction);
     }
 
     void OnDisable()
     {
-        MyEventManager.Instance.onCombatActiveEnemies -= OnCombatGetActiveEnemies;
+        Messenger.RemoveListener<OnCombatActiveEnemies>(OnCombatGetActiveEnemies);
+        Messenger.RemoveListener<OnCombatUISelectedAction>(OnCombatUISelectedAction);
     }
 
-    void OnCombatGetActiveEnemies(List<Enemy> enemies)
+    void OnCombatUISelectedAction(OnCombatUISelectedAction action)
     {
-        activeEnemies = enemies;
-        //foreach enemy, instantiate actionButtonPrefab and set text + 
-        for(int i = 0; i < activeEnemies.Count; i++)
+        //just listens to the state of target selection
+        switch (action.selectedAction)
+        {
+            case SelectedAction.SELECT_TARGET:
+                CreateTargetingButtonsAndDispatch();
+                break;
+        }
+    }
+
+    void CreateTargetingButtonsAndDispatch()
+    {
+        //-- Temp variable to dispatch with messenger object
+        List<ActionButton> actionButtons = new List<ActionButton>();
+
+        //-- foreach enemy, instantiate actionButtonPrefab and set text. 
+        //-- Note! Their positioning is handled by reciever of event
+        //-- Note! activeEnemies is updated whenever the amount of enemies change in battle
+        for (int i = 0; i < activeEnemies.Count; i++)
         {
             SelectTargetButton s = Instantiate<SelectTargetButton>(actionButtonPrefab);
             actionButtons.Add(s);
+            //-- Set the text of the Button object to name of enemy + number
             s.myButton.GetComponentInChildren<Text>().text = activeEnemies[i].EnemyName + " " + i;
+            //-- Set min height of the Layout component
             s.myLayoutElement.minHeight = 60f;
+            //-- A selectTarget button has a target associated with the button
             s.myTarget = activeEnemies[i];
-            
+            actionButtons.Add(s);
+
         }
-        scrollableActionList.DisplayActions<ActionButton>(actionButtons);
-        
+        //-- Create Message object to dispatch to listeners
+        OnCombatUIDisplayActionButtons temp = new OnCombatUIDisplayActionButtons();
+        temp.actionButtons = actionButtons;
+        Messenger.Dispatch(temp);
+    }
+
+    void OnCombatGetActiveEnemies(OnCombatActiveEnemies data)
+    {
+        //Must be recieved each time the number of enemies in battle changes
+        activeEnemies = data.activeEnemies;
     }
 
 }

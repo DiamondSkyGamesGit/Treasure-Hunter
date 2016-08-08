@@ -36,3 +36,27 @@ public class OnBattleStateChanged : Message
     public BattleState previousBattleState;
     public BattleState currentBattleState;
 }
+
+public class OnActionButtonClick : Message
+{
+    public ActionButton.ActionButtonType actionButtonType;
+    public ITargetable target;
+    //Add more here?
+}
+
+
+public class OnCombatUIDisplayActionButtons : Message
+{
+    public List<ActionButton> actionButtons;
+}
+
+public class OnCombatUISelectedAction : Message
+{
+    //expose State Machine
+    public SelectedAction previousSelectedAction;
+    public SelectedAction selectedAction;
+}
+
+
+
+

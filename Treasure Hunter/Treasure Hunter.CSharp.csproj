@@ -75,6 +75,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\First.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Action Bar\CombatActionBar.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\ActionButton.cs" />
     <Compile Include="Assets\Scripts\Combat\Combat UI\Buttons\AttackButton.cs" />
@@ -120,11 +121,11 @@
     <Compile Include="Assets\Scripts\RPG System\Skills\Base\SkillDatabase.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Interfaces\IPhysicalSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Interfaces\ISkill.cs" />
-    <Compile Include="Assets\Scripts\RPG System\Skills\Physical Skills\AttackSkill.cs" />
     <Compile Include="Assets\Scripts\RPG System\Skills\Skill Creator\SkillCreator.cs" />
     <Compile Include="Assets\Scripts\Systems\RPGSystem.cs" />
     <Compile Include="Assets\Scripts\TestScripts\InstantiationTest.cs" />
     <Compile Include="Assets\Scripts\TestScripts\MyDebugger.cs" />
+    <Compile Include="Assets\Second.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

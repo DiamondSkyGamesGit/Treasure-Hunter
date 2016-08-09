@@ -7,12 +7,5 @@ namespace SkillSystem {
     public class MagicSkill : Skill
     {
 
-
-
-        public override void UseSkill()
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

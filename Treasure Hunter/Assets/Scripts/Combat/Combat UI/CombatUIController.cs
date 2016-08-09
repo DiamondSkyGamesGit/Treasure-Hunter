@@ -19,11 +19,14 @@ using SkillSystem;
 /// 
 /// </summary>
 public class CombatUIController : MonoBehaviour {
-    
-    public ScrollableActionList scrollableActionList;
-    public Text activeHeroNameTextObj;
 
-    //public CombatUIDefaultActions defaultActions;
+    #region --//-- Fields --\\--
+
+    //-- The object that contains the listing of buttons
+    public ScrollableActionList scrollableActionList;
+
+    //-- The portrait object that contains active hero name in the GUI
+    public Text activeHeroNameTextObj;
 
     //the sorted list on who has highest actionBarvalue
     public List<Hero> activeHeroesSorted = new List<Hero>();
@@ -31,16 +34,19 @@ public class CombatUIController : MonoBehaviour {
     //used to let the player scroll through the list as a round-robin using Input.GetAxis from PlayerCombatInput
     int activeHeroesSortedIndex = 0;
 
-    //might not be a good system
+    //The Hero that is currently active in the GUI, as in the Hero whose actions we are choosing
     public Hero activeHero;
 
+    //-- The selected actions state machine used in this script
     public SelectedAction previousSelectedAction;
     public SelectedAction selectedAction;
 
+    //-- When the player has decided use of a skill, this is registered to Dispatch later when the player has completed a cycle of interaction by choosing a target
     public Skill currentSkillSelected;
 
     public bool showDebugLogs = false;
 
+    #endregion
 
     #region --//-- Monobehaviour Methods --\\--
 
@@ -55,11 +61,18 @@ public class CombatUIController : MonoBehaviour {
         if (activeHero == null)
             activeHero = GameController.Instance.activeHeroes[0];
 
+        //-- Listen to change of BattleState as defined in CombatController
         Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
+
+        //-- Listen to a click of the actionButtons. We do different things based on what Type of button was pressed
         Messenger.AddListener<OnActionButtonClick>(OnActionButtonClicked);
+
+        //-- Listen to a change in stateMachine SelectedAction. Though it is contained in this script, it is helpful to also listen to it
         Messenger.AddListener<OnCombatUISelectedAction>(OnSelectedAction);
+
+        //-- Listen to a change in the Active Hero on the Battle Canvas. The player may cycle through which hero he wants to perform an action
         Messenger.AddListener<OnCombatUIChangeActiveHero>(SetActiveHeroByInputDirection);
-        //add listener to OnActiveHeroChanged as well
+        //add listener to OnActiveHeroChanged as well?
 
 
     }
@@ -77,27 +90,30 @@ public class CombatUIController : MonoBehaviour {
 
     #region --//-- On Battle State Changed Methods --\\--
 
+    /// <summary>
+    /// Handle the changes whenever CombatController changes BattleState.
+    /// Handles which UI components to Show to the Player
+    /// </summary>
     public void OnBattleStateChanged(OnBattleStateChanged newBattleState)
     {
         switch (newBattleState.currentBattleState)
         {
+            //-- This state is triggered when the player presses X on Controller or left mouseclick
             case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):
 
                 //-- Get sorted hero list, pos[0] should be one with highest actionBarValue --
                 activeHeroesSorted = GetSortedHeroListByActionBarValue(CombatController.Instance.activeHeroes);
                 activeHero = activeHeroesSorted[0];
 
-                if (showDebugLogs) { 
-                    foreach (var v in activeHeroesSorted)
-                        Debug.Log(v.heroName + " " + v.MyActionBar.CurrentValue);
-                }
-                //-- Display scrollableActionList --
+                //-- Display scrollableActionList
                 EnablePlayerInputUI(activeHero);
 
                 break;
-
+            
+            //-- Normal time flow is in Combat when Action Bars are charging and we are waiting for Actors' actions or Input
             case (BattleState.NORMAL_TIME_FLOW):
 
+                //-- Do not display ScrollableActionList
                 DisablePlayerInputUI();
 
                 break;
@@ -108,6 +124,11 @@ public class CombatUIController : MonoBehaviour {
 
     #region --//-- Methods concerning Heroes and HeroData --\\--
 
+    /// <summary>
+    /// When a entity wants to change the Active Hero in the GUI we cycle through the Active Heroes based on direction
+    /// This is triggered with Player Input where the Player presses a directional button right / left
+    /// The activeHero in the GUI is then changed and Dispatched to listeners
+    /// </summary>
     void SetActiveHeroByInputDirection(OnCombatUIChangeActiveHero data)
     {
         switch (data.btnDirectionOnInput)
@@ -137,21 +158,20 @@ public class CombatUIController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets the ActiveHero portrait data (name, portrait icon) in the Combat UI
+    /// </summary>
     void SetActiveHeroPortraitData()
     {
         activeHeroNameTextObj.text = activeHero.heroName;
     }
 
     /// <summary>
-    /// Sort incoming list by highest actionBarValue as first
+    /// Sort incoming list by highest actionBarValue as first [0]
     /// </summary>
     private List<Hero> GetSortedHeroListByActionBarValue(List<Hero> heroes)
     {
-        //don't need to sort, just orderBy
-        //heroes.Sort(delegate (Hero a, Hero b) { return (a.actionBar).CompareTo(b.actionBar); });
         heroes = heroes.OrderByDescending(x => x.MyActionBar.CurrentValue).ToList();
-        //List<Hero> temp = new List<Hero>();
-       // temp = heroes;
         return heroes;
     }
 
@@ -236,10 +256,18 @@ public class CombatUIController : MonoBehaviour {
 
     #endregion
 
+    /// <summary>
+    /// Handles statemachine when a ActionButton was clicked based on the type of button that was clicked
+    /// </summary>
     public void OnActionButtonClicked(OnActionButtonClick onActionBtnClicked)
     {
-        Debug.Log("Got tha message! Button clicked was of ButtonType " + onActionBtnClicked.actionButtonType);
-        if (onActionBtnClicked.target != null) Debug.Log("The Target was of type " + onActionBtnClicked.target);
+        if (showDebugLogs)
+        {
+            Debug.Log("Got tha message! Button clicked was of ButtonType " + onActionBtnClicked.actionButtonType);
+            if (onActionBtnClicked.target != null) Debug.Log("The Target was of type " + onActionBtnClicked.target);
+        }
+
+       
 
         //-- Check which buttonType was clicked and handle event dispatches accordingly
         switch (onActionBtnClicked.actionButtonType)
@@ -253,10 +281,13 @@ public class CombatUIController : MonoBehaviour {
                         DispatchSkillUsed(onActionBtnClicked.theSkill);
                     
                         //-- Set SelectedAction to display targeting list
+                        //-- This might be redundant. I can have the UI components listen to buttonTypes that they need
+                        //-- For example, CombatUITargetSelection component just needs to listen to OnActionButtonClick.actionButtonType TargetSelector
+                        //-- Then this state machine might be redundant!
                         SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
                     }
                     else
-                        Debug.LogWarning("The button you pressed had no Skill associated!");
+                        Debug.LogWarning("The button you pressed had no Skill associated! The Button Prefab must have a scriptableObject Skill component!");
 
                 break;
             

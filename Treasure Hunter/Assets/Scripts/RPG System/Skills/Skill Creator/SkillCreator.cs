@@ -10,7 +10,6 @@ namespace SkillSystem {
     /// </summary>
     public class SkillCreator : MonoBehaviour {
 
-        public AttackSkill attackSkill;
         public bool DebugGetAllValuesFromDatabase = false;
 
 	    // Use this for initialization

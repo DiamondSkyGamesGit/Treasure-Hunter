@@ -4,6 +4,10 @@ using UnityEngine.UI;
 using System;
 using SkillSystem;
 
+/// <summary>
+/// An ActionButton is the View in the MVC in terms of showing the player an Action
+/// The button this script is associated with is considered using a Skill or Targeting an Actor
+/// </summary>
 [System.Serializable]
 public abstract class ActionButton : MonoBehaviour {
 
@@ -30,11 +34,6 @@ public abstract class ActionButton : MonoBehaviour {
 
     //add sprite icon
     //add text shown
-
-	// Use this for initialization
-	void Start () {
-
-	}
 
     protected virtual void OnEnable()
     {

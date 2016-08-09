@@ -20,13 +20,14 @@ public class ScrollableActionList : MonoBehaviour {
 
     void OnEnable()
     {
-        actionButtons = new List<ActionButton>();
+        Messenger.AddListener<OnCombatUIDisplayActionButtons>(OnCombatUIDisplayActionButtons);
 
     }
 
     void OnDisable()
     {
         actionButtons.Clear();
+        Messenger.RemoveListener<OnCombatUIDisplayActionButtons>(OnCombatUIDisplayActionButtons);
     }
 	
 	// Update is called once per frame
@@ -34,12 +35,31 @@ public class ScrollableActionList : MonoBehaviour {
 	
 	}
 
+    /// <summary>
+    /// Display the incoming buttons from OnCombatUIDisplayActionButtons in my list by setting their parent
+    /// </summary>
+    void OnCombatUIDisplayActionButtons(OnCombatUIDisplayActionButtons data)
+    {
+        //-- Destroy my current actionButtons before adding new ones
+        DestroyActionButtons();
+        contentArea.localPosition = Vector3.zero;
+
+        for(int i = 0; i < data.actionButtons.Count; i++)
+        {
+            data.actionButtons[i].transform.SetParent(contentArea.transform, false);
+            //-- Add to my list
+            actionButtons.Add(data.actionButtons[i]);
+        }
+    }
+
     public void DestroyActionButtons()
     {
         if(actionButtons.Count > 0)
         {
             foreach (var g in actionButtons)
                 Destroy(g.gameObject);
+
+            actionButtons.Clear();
         }
         else
         {

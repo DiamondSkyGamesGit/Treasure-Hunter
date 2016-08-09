@@ -4,7 +4,7 @@ public class EnemyTest : Enemy {
 
    public float myHealth { get { return myHealth; } }
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
 
         //KUL KODE
         /*
@@ -13,7 +13,7 @@ public class EnemyTest : Enemy {
             Debug.Log(i);
         }
         */
-        
+        base.Start();
 	}
 
     public override void Attack(IDamageable target)
@@ -25,11 +25,14 @@ public class EnemyTest : Enemy {
     void Update () {
 	
 	}
-    /*
+    
     public override void Die()
     {
-        Destroy(gameObject);
-        //throw new NotImplementedException();
+        OnEnemyDie temp = new OnEnemyDie();
+        temp.theEnemy = this;
+        Messenger.Dispatch(temp);
+
+        base.Die();
     }
-    */
+    
 }

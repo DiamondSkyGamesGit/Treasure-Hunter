@@ -5,17 +5,6 @@ using HeroData;
 
 
 
-//global definition of BattleState
-public enum BattleState
-{
-    NOT_COMBAT,
-    COMBAT_INTRODUCTION,
-    NORMAL_TIME_FLOW,
-    PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
-    PLAYER_WIN,
-    PLAYER_LOOSE
-}
-
 
 /// <summary>
 /// This class holds the current combat state
@@ -38,7 +27,6 @@ public class CombatController : MonoBehaviour {
     public List<Hero> activeHeroes = new List<Hero>();
 
     //??? how should i do this
-    public List<IDamageDealer> combatants = new List<IDamageDealer>();
     public List<Enemy> enemies = new List<Enemy>();
 
     #region ----My Messages----
@@ -80,12 +68,12 @@ public class CombatController : MonoBehaviour {
 
     void OnEnable()
     {
-        
+        Messenger.AddListener<OnEnemyDie>(UpdateActiveEnemies);
     }
 
     void OnDisable()
     {
-
+        Messenger.RemoveListener<OnEnemyDie>(UpdateActiveEnemies);
     }
     #endregion
 
@@ -151,6 +139,20 @@ public class CombatController : MonoBehaviour {
 
         Messenger.Dispatch(onBattleStateChanged);
         Debug.Log("Current Battlestate = " + currentBattleState);
+    }
+
+    void UpdateActiveEnemies(OnEnemyDie data)
+    {
+        List<Enemy> temp = new List<Enemy>();
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i] != null)
+                temp.Add(enemies[i]);
+        }
+
+        OnCombatActiveEnemies dataclass = new OnCombatActiveEnemies();
+        dataclass.activeEnemies = temp;
+        Messenger.Dispatch(dataclass);
     }
 
     public void OnPlayerInputPauseIPausables(bool isPaused)

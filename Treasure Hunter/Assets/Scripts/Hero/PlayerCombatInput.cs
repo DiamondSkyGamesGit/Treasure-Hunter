@@ -19,8 +19,6 @@ public class PlayerCombatInput : MonoBehaviour {
     //might not need to notify from this class WHICH button was pressed right?
     //Then the button that is pressed tells UIController what to do forward
     //then this class just handles the actual Input, not what is done with the input
-    public delegate void OnClickAction();
-    public event OnClickAction onClickAction;
 
     //-------Hero Data-------------
     //The selected hero is the hero which the player uses the CombatUI for (like FFXII)
@@ -70,6 +68,19 @@ public class PlayerCombatInput : MonoBehaviour {
             if (Input.GetKeyUp(KeyCode.Backspace))
             {
                 CombatController.Instance.OnPlayerInputPauseIPausables(false);
+            }
+
+            if(Input.GetKeyUp(KeyCode.X))
+            {
+                OnCombatUIChangeActiveHero temp = new OnCombatUIChangeActiveHero();
+                temp.btnDirectionOnInput = CombatUIScrollDirection.RIGHT;
+                Messenger.Dispatch(temp);
+            }
+            if (Input.GetKeyUp(KeyCode.Z))
+            {
+                OnCombatUIChangeActiveHero temp = new OnCombatUIChangeActiveHero();
+                temp.btnDirectionOnInput = CombatUIScrollDirection.LEFT;
+                Messenger.Dispatch(temp);
             }
         }
     }

@@ -12,6 +12,7 @@ namespace HeroData {
     /// Add component to a PlayableHero gameobject
     /// </summary>
     [System.Serializable]
+    [RequireComponent(typeof(Hero))]
     public class HeroSkills : MonoBehaviour {
 
         //certain classes can be coupled since they are so relevant to each other
@@ -47,17 +48,5 @@ namespace HeroData {
             }
             return null;
         }
-
-        /*Does not work now....
-        public Skill GetSkillByType<T>() where T : Skill
-        {
-            foreach(KeyValuePair<string, Skill> v in mySkillsCollection)
-            {
-                if (v.GetType() is T)
-                    return v.Value;
-            }
-            return null;
-        }
-        */
     }
 }

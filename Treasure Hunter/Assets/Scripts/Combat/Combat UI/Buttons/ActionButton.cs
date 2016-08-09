@@ -4,34 +4,36 @@ using UnityEngine.UI;
 using System;
 using SkillSystem;
 
+/// <summary>
+/// An ActionButton is the View in the MVC in terms of showing the player an Action
+/// The button this script is associated with is considered using a Skill or Targeting an Actor
+/// </summary>
 [System.Serializable]
-public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEventPublisher {
+public abstract class ActionButton : MonoBehaviour {
 
     public Button myButton;
     public LayoutElement myLayoutElement;
-    public event OnActionButtonClick onActionButtonClick;
+    public Skill mySkill;
+
+    //Can this Enum just be 2 things? Target Selector and UseSkill, then i don't need to send as much stuff in Messages
     public enum ActionButtonType
     {
-        ATTACK,
-        SELECT_TARGET
+        //-- Skill selector direct action means - Character chooses skill and then target, with no selection menu
+        //-- A Magic Skill Action Button is also a Direct Action that handles targeting directly after it is pressed
+
+        //--Skill selector choose skill from list means - a skill must be chosen from available skills from a list
+        //-- That skill Action Button is a Direct Action
+
+
+        SKILL_SELECTOR_DIRECT_ACTION,
+        SKILL_SELECTOR_CHOOSE_SKILL_FROM_LIST,
+        TARGET_SELECTOR
     }
 
     public ActionButtonType actionButtonType;
 
     //add sprite icon
     //add text shown
-
-
-
-    public ActionButton()
-    {
-        Start();
-    }
-
-	// Use this for initialization
-	void Start () {
-
-	}
 
     protected virtual void OnEnable()
     {
@@ -43,11 +45,42 @@ public abstract class ActionButton : MonoBehaviour, IUIAction, IActionButtonEven
     {
 
     }
-    
-    protected void PublishActionButtonClick(ActionButton theActionButton, ITargetable theTarget)
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType)
     {
-        if(onActionButtonClick != null)
-            onActionButtonClick(theActionButton, theTarget);
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, ITargetable target)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.target = target;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, Skill skillToUse)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.theSkill = skillToUse;
+        return temp;
+    }
+
+    protected virtual OnActionButtonClick MyActionButtonClickEventData(ActionButtonType actionBtnType, ITargetable target, Skill skillToUse)
+    {
+        OnActionButtonClick temp = new OnActionButtonClick();
+        temp.actionButtonType = actionBtnType;
+        temp.target = target;
+        temp.theSkill = skillToUse;
+        return temp;
+    }
+
+    protected void PublishActionButtonClick(OnActionButtonClick actionEvent)
+    {
+        Messenger.Dispatch(actionEvent);
     }
     
     protected abstract void AddButtonListener();

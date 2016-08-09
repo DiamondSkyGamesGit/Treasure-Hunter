@@ -8,9 +8,11 @@ namespace HeroData {
     /// Contains all hero data for the current hero
     /// </summary>
     [RequireComponent(typeof(HeroSkills))]
-
     [System.Serializable]
     public class Hero : MonoBehaviour, IPausable, IHasActionBar, ITargetable, IDamageable, IDamageDealer {
+
+        private Transform myTransform;
+        public Transform MyTransform { get { return myTransform; } set { myTransform = value; } }
 
         //The Hero Name...
         public string heroName;
@@ -30,6 +32,9 @@ namespace HeroData {
 
         private bool isTargetable = true;
         public bool IsTargetable { get { return isTargetable; } set { isTargetable = value; } }
+
+        private bool isTargeted = false;
+        public bool IsTargeted { get { return isTargeted; } set { if (IsTargetable) isTargeted = value; else isTargeted = false; } }
 
         private TargetType _targetType;
         public TargetType targetType { get { return _targetType; } set { _targetType = value; } }
@@ -54,9 +59,13 @@ namespace HeroData {
         //The hero's available Skills
         public HeroSkills heroSkills;
 
+        public Skill queuedSkill;
+
         #region //--//-- Monobehaviour Methods --\\--\\
 
         void Start () {
+            MyTransform = GetComponent<Transform>();
+
             //-- Get Hero Skills --
             if (heroSkills == null) heroSkills = GetComponent<HeroSkills>();
 
@@ -65,7 +74,7 @@ namespace HeroData {
             MyActionBar = new ActionBar(0f, 1f, UnityEngine.Random.Range(0, 0.3f));
 
             //-- initialize targetType --
-            _targetType = TargetType.HERO;
+            targetType = TargetType.HERO;
 	    }
 
         void OnEnable()
@@ -116,6 +125,21 @@ namespace HeroData {
                     PauseMe(false);
                     break;
             }
+        }
+
+        public void UseSkillOnTarget(Skill theSkill, ITargetable target)
+        {
+            target.TakeDamage(theSkill.baseDamage + Random.Range(-7, 7));
+            PlaySkillAnimation(theSkill, target.MyTransform);
+            MyActionBar = new ActionBar(0, 1f, 0f);
+            CombatController.Instance.SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
+        }
+
+        //just fo fun remove later
+        void PlaySkillAnimation(Skill theSkill, Transform target)
+        {
+            float length = 1f;
+            MyTransform.position = target.position + (target.forward * length);
         }
 
         public void ResetActionBar()

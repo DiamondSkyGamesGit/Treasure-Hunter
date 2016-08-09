@@ -4,11 +4,15 @@ using System;
 using UnityEngine.Events;
 using SkillSystem;
 
-[System.Serializable]
 public class AttackButton : ActionButton//, //IActionButtonEventPublisher
 {
 
     //public override event OnActionButtonClick onActionButtonClick;
+
+    void Start()
+    {
+
+    }
 
     protected override void OnEnable()
     {
@@ -24,17 +28,22 @@ public class AttackButton : ActionButton//, //IActionButtonEventPublisher
         RemoveButtonListener();
     }
 
+
+
     //Added these for safety in the future
     protected override void AddButtonListener()
     {
-        myButton.onClick.AddListener(() => PublishActionButtonClick(this, null));
+
+        myButton.onClick.AddListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION, mySkill)));
     }
 
     protected override void RemoveButtonListener()
     {
         if (myButton.onClick != null)
-            myButton.onClick.RemoveListener(() => PublishActionButtonClick(this, null));
+            myButton.onClick.RemoveListener(() => PublishActionButtonClick(MyActionButtonClickEventData(ActionButtonType.SKILL_SELECTOR_DIRECT_ACTION, mySkill)));
     }
+
+    //might not need DoActions now....
 
     public override void DoAction()
     {

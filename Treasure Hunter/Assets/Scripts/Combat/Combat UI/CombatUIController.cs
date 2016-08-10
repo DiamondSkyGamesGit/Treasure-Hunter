@@ -241,6 +241,7 @@ public class CombatUIController : MonoBehaviour {
         //-- Enable ScrollableActionList --
         scrollableActionList.gameObject.SetActive(true);
 
+        //-- Should probably set this outside of this method as in, OnActiveHEroChanged should be fired whenever and recieved by this script when the script is "enabled"
         //-- Set textObject to represent HeroName
         activeHeroNameTextObj.text = theHero.heroName;
 
@@ -251,6 +252,7 @@ public class CombatUIController : MonoBehaviour {
 
     public void DisablePlayerInputUI()
     {
+        Debug.Log("DisablePlayerInputUI in CombatUIController was called now!");
         scrollableActionList.gameObject.SetActive(false);
     }
 
@@ -283,7 +285,7 @@ public class CombatUIController : MonoBehaviour {
                         //-- Set SelectedAction to display targeting list
                         //-- This might be redundant. I can have the UI components listen to buttonTypes that they need
                         //-- For example, CombatUITargetSelection component just needs to listen to OnActionButtonClick.actionButtonType TargetSelector
-                        //-- Then this state machine might be redundant!
+                        //-- Then SelectedAction state machine might be redundant!
                         SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
                     }
                     else
@@ -301,9 +303,11 @@ public class CombatUIController : MonoBehaviour {
                 if(onActionBtnClicked.target != null) {
 
                     //-- Check which targetType the ITargetable was, dispatch events accordingly
-                    DispatchSelectedTargetByTargetType(onActionBtnClicked.target.targetType);
+                    //-- This might be redundant. Should probably be enough to just dispatch the chosen skill and target
+                    //-- A listener must implement how they want to react to Skill and Target...
+                   // Not used yet:  DispatchSelectedTargetByTargetType(onActionBtnClicked.target.targetType);
                     activeHero.UseSkillOnTarget(currentSkillSelected, onActionBtnClicked.target);
-                    DisablePlayerInputUI();
+                    //CombatController.Instance.OnPlayerInputPauseIPausables(false);
                 }
                 else
                 {

@@ -118,7 +118,7 @@ namespace HeroData {
             {
                 case (BattleState.NORMAL_TIME_FLOW):
                     //do cool stuff
-                    actionState = ActionState.ACTION_BAR_CHARGING;
+                   // actionState = ActionState.ACTION_BAR_CHARGING;
                     PauseMe(true);
                     break;
                 case (BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT):

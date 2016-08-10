@@ -157,8 +157,9 @@ public class CombatController : MonoBehaviour {
 
     public void OnPlayerInputPauseIPausables(bool isPaused)
     {
-        foreach (var v in activeHeroes)
+        foreach (var v in activeHeroes) {
             v.PauseMe(isPaused);
+        }
         if (isPaused)
             SetCurrentBattleState(BattleState.PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT);
         else

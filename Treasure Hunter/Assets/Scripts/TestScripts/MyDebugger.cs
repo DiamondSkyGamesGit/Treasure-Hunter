@@ -6,5 +6,7 @@ using System;
 
 public class MyDebugger : MonoBehaviour
 {
-
+    void Start()
+    {
+    }
 }

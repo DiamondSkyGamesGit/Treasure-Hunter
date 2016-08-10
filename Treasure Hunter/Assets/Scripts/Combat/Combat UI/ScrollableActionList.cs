@@ -26,6 +26,7 @@ public class ScrollableActionList : MonoBehaviour {
 
     void OnDisable()
     {
+        DestroyActionButtons();
         actionButtons.Clear();
         Messenger.RemoveListener<OnCombatUIDisplayActionButtons>(OnCombatUIDisplayActionButtons);
     }
@@ -54,7 +55,7 @@ public class ScrollableActionList : MonoBehaviour {
 
     public void DestroyActionButtons()
     {
-        if(actionButtons.Count > 0)
+        if (actionButtons.Count > 0)
         {
             foreach (var g in actionButtons)
                 Destroy(g.gameObject);
@@ -65,35 +66,6 @@ public class ScrollableActionList : MonoBehaviour {
         {
             Debug.LogWarning("No actionButtons in List");
             return;
-        }
-    }
-
-    public void InstantiateAndDisplayItems<T>(List<T> itemsToDisplay) where T : ActionButton
-    {
-        //have to explicitly say localposition is Vector3.zero each time, else it is reset to weird pos @onQuit for some reason.......
-        contentArea.localPosition = Vector3.zero;
-
-        actionButtons.Clear();
-        for (int i = 0; i < itemsToDisplay.Count; i++)
-        {
-            ActionButton g = Instantiate(itemsToDisplay[i]) as ActionButton;
-            g.transform.SetParent(contentArea.transform, false);
-            g.myLayoutElement.minWidth = 60f;
-            actionButtons.Add(g);
-        }
-    }
-
-    public void DisplayActions<T>(List<T> itemsToDisplay) where T : ActionButton
-    {
-        //have to explicitly say localposition is Vector3.zero each time, else it is reset to weird pos @onQuit for some reason.......
-        contentArea.localPosition = Vector3.zero;
-        actionButtons.Clear();
-        for (int i = 0; i < itemsToDisplay.Count; i++)
-        {
-            ActionButton g = itemsToDisplay[i];
-            g.transform.SetParent(contentArea.transform, false);
-            g.myLayoutElement.minWidth = 60f;
-            actionButtons.Add(g);
         }
     }
 

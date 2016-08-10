@@ -85,18 +85,6 @@ public class PlayerCombatInput : MonoBehaviour {
         }
     }
 
-
-
-    void EnableBattleCanvasInput()
-    {
-
-    }
-
-    void DisableBattleCanvasInput()
-    {
-
-    }
-
     void EnablePlayerInput()
     {
 

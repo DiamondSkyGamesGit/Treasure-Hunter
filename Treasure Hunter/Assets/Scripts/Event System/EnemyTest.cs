@@ -29,7 +29,6 @@ public class EnemyTest : Enemy {
     public override void Die()
     {
         OnEnemyDie temp = new OnEnemyDie();
-        temp.theEnemy = this;
         Messenger.Dispatch(temp);
 
         base.Die();

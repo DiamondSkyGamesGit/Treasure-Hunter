@@ -12,6 +12,7 @@ public class CombatEncounter : MonoBehaviour {
     public List<Enemy> enemies = new List<Enemy>();
     public Vector3 targetCameraPosition;
     public bool debugShowGizmos = false;
+    private bool combatStarted = false;
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +28,7 @@ public class CombatEncounter : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && !combatStarted)
             StartCombatEncounter();
     }
 
@@ -40,6 +41,7 @@ public class CombatEncounter : MonoBehaviour {
 
         CombatController.Instance.InitializeCombat(enemies);
         CameraController.Instance.StartCombatPositionAt(Camera.main.transform.position, targetCameraPosition, transform);
+        combatStarted = true;
     }
 
     void OnDrawGizmos()

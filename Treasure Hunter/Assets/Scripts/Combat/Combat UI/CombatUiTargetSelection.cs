@@ -69,6 +69,7 @@ public class CombatUiTargetSelection : CombatUI {
     void OnCombatGetActiveEnemies(OnCombatActiveEnemies data)
     {
         //Must be recieved each time the number of enemies in battle changes
+        activeEnemies.Clear();
         activeEnemies = data.activeEnemies;
     }
 

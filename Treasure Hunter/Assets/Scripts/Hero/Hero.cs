@@ -61,6 +61,11 @@ namespace HeroData {
 
         public Skill queuedSkill;
 
+        public bool isGrounded = false;
+        public LayerMask groundLayer;
+
+        public bool drawDebugGizmos = false;
+
         #region //--//-- Monobehaviour Methods --\\--\\
 
         void Start () {
@@ -90,6 +95,21 @@ namespace HeroData {
 
         void Update()
         {
+            //-- Handle the model being grounded
+            //-- ! haven't handled logic check for ISGrounded yet.. fix later
+            if (!isGrounded)
+            {
+                float distanceFromGround = .1f;
+                RaycastHit hit;
+                if(Physics.Raycast(MyTransform.position, -MyTransform.up, out hit))
+                {
+                    Vector3 pos = MyTransform.position;
+                    pos.y = (hit.point + Vector3.up * distanceFromGround).y;
+                    MyTransform.position = pos;
+                    //isGrounded = MyTransform.position.y >= 0.01f && MyTransform.position.y < pos.y + (Vector3.up * .2f).y ? true : false;
+                }
+            }
+
             //Increment the ActionBar
             if (actionBarActive)
             {
@@ -104,6 +124,19 @@ namespace HeroData {
                 //do last hero action again
                 //do queued action
                 //if ATB wait, then just pop up the UI menu when a players action is ready
+            }
+        }
+
+        void OnDrawGizmos()
+        {
+            if (drawDebugGizmos)
+            {
+                RaycastHit hit;
+                Ray ray = new Ray(MyTransform.position, -MyTransform.up);
+                if (Physics.Raycast(ray, out hit, 1000f, groundLayer))
+                {
+                    Gizmos.DrawLine(ray.origin, hit.point);
+                }
             }
         }
 
@@ -130,16 +163,38 @@ namespace HeroData {
         public void UseSkillOnTarget(Skill theSkill, ITargetable target)
         {
             target.TakeDamage(theSkill.baseDamage + Random.Range(-7, 7));
-            PlaySkillAnimation(theSkill, target.MyTransform);
+            //PlaySkillAnimation(theSkill, transform.position, target.MyTransform);
+            StartCoroutine(AwesomeAttackAnimation(theSkill, MyTransform.position, target.MyTransform));
             MyActionBar = new ActionBar(0, 1f, 0f);
             CombatController.Instance.SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
         }
 
         //just fo fun remove later
-        void PlaySkillAnimation(Skill theSkill, Transform target)
+        void PlaySkillAnimation(Skill theSkill, Vector3 initialPos, Transform target)
         {
             float length = 1f;
             MyTransform.position = target.position + (target.forward * length);
+        }
+
+        IEnumerator AwesomeAttackAnimation(Skill theSkill, Vector3 initialPos, Transform target)
+        {
+            float length = 2f;
+            float speed = 6f;
+            Vector3 targetPos = target.position + (target.forward * length);
+            while(MyTransform.position != targetPos)
+            {
+                MyTransform.position = Vector3.MoveTowards(MyTransform.position, targetPos, Time.deltaTime * speed);
+                yield return null;
+                /*
+                curLerpTime += Time.deltaTime;
+                if (curLerpTime >= lerpTime)
+                    curLerpTime = lerpTime;
+                float perc = curLerpTime / lerpTime;
+                MyTransform.position = Vector3.Lerp(initialPos, targetPos, perc);
+                yield return null;
+                */
+            }
+            MyTransform.position = initialPos;
         }
 
         public void ResetActionBar()

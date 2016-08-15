@@ -8,6 +8,7 @@ public enum BattleState
     PAUSE_COMBAT_WAIT_FOR_PLAYER_INPUT,
     PLAYER_WIN,
     PLAYER_LOOSE,
+    EXIT_COMBAT
 
 }
 

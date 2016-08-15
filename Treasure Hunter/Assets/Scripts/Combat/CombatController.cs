@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using HeroData;
 
 
-
-
 /// <summary>
 /// This class holds the current combat state
 /// Handles pausing of other scripts when the player is in PlayerInputMode
@@ -57,14 +55,6 @@ public class CombatController : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-	void Start () {
-
-
-	}
-	
-	void Update () {
-	
-	}
 
     void OnEnable()
     {
@@ -143,13 +133,28 @@ public class CombatController : MonoBehaviour {
 
     void UpdateActiveEnemies(OnEnemyDie data)
     {
+        //-- Call this method to ensure the item is actually NULL in the list, need a slight delay to ensure this
+        StartCoroutine(CheckIfNullDelayed());
+    }
+
+    IEnumerator CheckIfNullDelayed()
+    {
+        yield return new WaitForSeconds(0.1f);
         List<Enemy> temp = new List<Enemy>();
-        for(int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < enemies.Count; i++)
         {
             if (enemies[i] != null)
                 temp.Add(enemies[i]);
         }
+        if(temp.Count <= 0)
+        {
+            //-- All enemies dead. Change state to player win
+            SetCurrentBattleState(BattleState.PLAYER_WIN);
 
+        }
+
+        enemies.Clear();
+        enemies = temp;
         OnCombatActiveEnemies dataclass = new OnCombatActiveEnemies();
         dataclass.activeEnemies = temp;
         Messenger.Dispatch(dataclass);

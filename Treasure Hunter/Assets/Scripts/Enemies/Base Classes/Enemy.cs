@@ -108,6 +108,7 @@ public abstract class Enemy : MonoBehaviour, IKillable, IDamageable, IDamageDeal
 
     public virtual void Die()
     {
+
         Destroy(gameObject);
     }
 }

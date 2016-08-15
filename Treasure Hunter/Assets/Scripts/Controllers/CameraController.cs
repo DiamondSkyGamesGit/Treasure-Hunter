@@ -14,6 +14,7 @@ public class CameraController : MonoBehaviour {
     public Bloom bloomEffect;
 
     private float currentLerpTime;
+    private bool combatIntroEffectPlayed = false;
 
     void Awake()
     {
@@ -50,7 +51,11 @@ public class CameraController : MonoBehaviour {
     {
         switch (newBattleState.currentBattleState) { 
             case (BattleState.COMBAT_INTRODUCTION):
-                StartCoroutine(CombatIntroductionImageBloomEffect(1f, 30f));
+                if(!combatIntroEffectPlayed)
+                    StartCoroutine(CombatIntroductionImageBloomEffect(1f, 30f));
+                break;
+            case BattleState.EXIT_COMBAT:
+                combatIntroEffectPlayed = false;
                 break;
         }
     }
@@ -72,6 +77,7 @@ public class CameraController : MonoBehaviour {
         }
         curLerpTime = 0;
         bloomEffect.bloomIntensity = targetBloomIntensity;
+        combatIntroEffectPlayed = true;
     }
 
     #region --Combat Position Methods--

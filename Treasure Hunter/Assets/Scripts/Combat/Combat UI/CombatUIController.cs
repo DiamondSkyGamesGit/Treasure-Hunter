@@ -63,13 +63,10 @@ public class CombatUIController : MonoBehaviour {
 
         //-- Listen to change of BattleState as defined in CombatController
         Messenger.AddListener<OnBattleStateChanged>(OnBattleStateChanged);
-
         //-- Listen to a click of the actionButtons. We do different things based on what Type of button was pressed
         Messenger.AddListener<OnActionButtonClick>(OnActionButtonClicked);
-
         //-- Listen to a change in stateMachine SelectedAction. Though it is contained in this script, it is helpful to also listen to it
         Messenger.AddListener<OnCombatUISelectedAction>(OnSelectedAction);
-
         //-- Listen to a change in the Active Hero on the Battle Canvas. The player may cycle through which hero he wants to perform an action
         Messenger.AddListener<OnCombatUIChangeActiveHero>(SetActiveHeroByInputDirection);
         //add listener to OnActiveHeroChanged as well?

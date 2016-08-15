@@ -121,7 +121,6 @@ public class OnSkillUseOnTarget : Message
 
 public class OnEnemyDie : Message
 {
-    public Enemy theEnemy;
 }
 
 

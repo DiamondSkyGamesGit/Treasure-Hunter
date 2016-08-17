@@ -119,6 +119,31 @@ public class OnSkillUseOnTarget : Message
     public ITargetable theTarget;
 }
 
+/// <summary>
+/// Dispatched when the player has Queued an Action
+/// </summary>
+public class OnQueuedAction : Message
+{
+   public Hero theHero;
+}
+
+/// <summary>
+/// Dispatched when the Actor is currently executing an Action
+/// </summary>
+public class OnQueuedActionExecutingNow : Message
+{
+    public Hero theHero;
+    //public Enemy..?
+}
+
+/// <summary>
+/// Dispatched when an Actor has executed an Action
+/// </summary>
+public class OnQueuedActionExecuted : Message
+{
+    public Hero theHero;
+}
+
 public class OnEnemyDie : Message
 {
 }

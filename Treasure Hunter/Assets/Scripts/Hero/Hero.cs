@@ -162,18 +162,34 @@ namespace HeroData {
 
         public void UseSkillOnTarget(Skill theSkill, ITargetable target)
         {
-            target.TakeDamage(theSkill.baseDamage + Random.Range(-7, 7));
-            //PlaySkillAnimation(theSkill, transform.position, target.MyTransform);
-            StartCoroutine(AwesomeAttackAnimation(theSkill, MyTransform.position, target.MyTransform));
-            MyActionBar = new ActionBar(0, 1f, 0f);
             CombatController.Instance.SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
+            StopCoroutine(QueueAttackExecuteOnActionBarMax(theSkill, target));
+            StartCoroutine(QueueAttackExecuteOnActionBarMax(theSkill, target));
         }
 
-        //just fo fun remove later
-        void PlaySkillAnimation(Skill theSkill, Vector3 initialPos, Transform target)
+        IEnumerator QueueAttackExecuteOnActionBarMax(Skill theSkill, ITargetable target)
         {
-            float length = 1f;
-            MyTransform.position = target.position + (target.forward * length);
+            OnQueuedAction queuedAction = new OnQueuedAction();
+            queuedAction.theHero = this;
+            Messenger.Dispatch(queuedAction);
+
+            while(MyActionBar.CurrentValue < MyActionBar.Max && !ActionPaused)
+            {
+                yield return null;
+            }
+            //change execution of damage dealing to be part of the animation later
+            if(target != null) {
+                OnQueuedActionExecutingNow executingNow = new OnQueuedActionExecutingNow();
+                executingNow.theHero = this;
+                Messenger.Dispatch(executingNow);
+
+                target.TakeDamage(theSkill.baseDamage + Random.Range(-7, 7));
+                StartCoroutine(AwesomeAttackAnimation(theSkill, MyTransform.position, target.MyTransform));
+                MyActionBar = new ActionBar(0, 1f, 0f);
+            }
+            OnQueuedActionExecuted actionExecuted = new OnQueuedActionExecuted();
+            actionExecuted.theHero = this;
+            Messenger.Dispatch(actionExecuted);
         }
 
         IEnumerator AwesomeAttackAnimation(Skill theSkill, Vector3 initialPos, Transform target)
@@ -181,9 +197,10 @@ namespace HeroData {
             float length = 2f;
             float speed = 6f;
             Vector3 targetPos = target.position + (target.forward * length);
-            while(MyTransform.position != targetPos)
+            while(Vector3.Distance(MyTransform.position, targetPos) >= 2.4f)
             {
                 MyTransform.position = Vector3.MoveTowards(MyTransform.position, targetPos, Time.deltaTime * speed);
+                speed += Time.deltaTime;
                 yield return null;
                 /*
                 curLerpTime += Time.deltaTime;
@@ -194,7 +211,14 @@ namespace HeroData {
                 yield return null;
                 */
             }
-            MyTransform.position = initialPos;
+            speed = 8f;
+            while(Vector3.Distance(MyTransform.position, initialPos) > 0.1f)
+            {
+                MyTransform.position = Vector3.MoveTowards(myTransform.position, initialPos, Time.deltaTime * speed);
+                yield return null;
+            }
+            myTransform.position = initialPos;
+
         }
 
         public void ResetActionBar()

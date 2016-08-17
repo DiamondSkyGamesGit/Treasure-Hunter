@@ -22,6 +22,7 @@ public class CombatActionBar : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+
         if (actionBarImage == null) actionBarImage = GetComponent<Image>();
         if (actionBarImage.type != Image.Type.Filled) {
             actionBarImage.type = Image.Type.Filled;
@@ -29,7 +30,31 @@ public class CombatActionBar : MonoBehaviour {
         }
 
         if (owner == null && ownerIndex != -1) owner = GameController.Instance.activeHeroes[ownerIndex];
-	}
+
+    }
+
+    void OnEnable()
+    {
+        Messenger.AddListener<OnQueuedAction>(OnQueuedAction);
+        Messenger.AddListener<OnQueuedActionExecuted>(OnQueuedActionExecuted);
+    }
+    void OnDisable()
+    {
+        Messenger.RemoveListener<OnQueuedAction>(OnQueuedAction);
+        Messenger.RemoveListener<OnQueuedActionExecuted>(OnQueuedActionExecuted);
+    }
+
+    void OnQueuedAction(OnQueuedAction action)
+    {
+        if(action.theHero.heroName == owner.heroName)
+            actionBarImage.color = Color.cyan;
+    }
+
+    void OnQueuedActionExecuted(OnQueuedActionExecuted action)
+    {
+        if (action.theHero.heroName == owner.heroName)
+            actionBarImage.color = Color.white;
+    }
 	
 	// Update is called once per frame
 	void Update ()

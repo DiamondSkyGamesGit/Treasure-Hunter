@@ -57,9 +57,9 @@ public class PlayerCombatInput : MonoBehaviour {
     {
         //test pausing of Ipausable entities
         if(CombatController.Instance.currentBattleState == BattleState.NORMAL_TIME_FLOW) {
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                CombatController.Instance.OnPlayerInputPauseIPausables(true);
+                CombatController.Instance.PauseIPausables(true);
             }
         }
 
@@ -67,7 +67,7 @@ public class PlayerCombatInput : MonoBehaviour {
         {
             if (Input.GetKeyUp(KeyCode.Backspace))
             {
-                CombatController.Instance.OnPlayerInputPauseIPausables(false);
+                CombatController.Instance.PauseIPausables(false);
             }
 
             if(Input.GetKeyUp(KeyCode.X))

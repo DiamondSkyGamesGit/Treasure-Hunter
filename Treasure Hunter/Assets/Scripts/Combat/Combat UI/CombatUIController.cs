@@ -284,6 +284,7 @@ public class CombatUIController : MonoBehaviour {
                         //-- For example, CombatUITargetSelection component just needs to listen to OnActionButtonClick.actionButtonType TargetSelector
                         //-- Then SelectedAction state machine might be redundant!
                         SetCurrentSelectedAction(SelectedAction.SELECT_TARGET);
+
                     }
                     else
                         Debug.LogWarning("The button you pressed had no Skill associated! The Button Prefab must have a scriptableObject Skill component!");
@@ -305,6 +306,7 @@ public class CombatUIController : MonoBehaviour {
                    // Not used yet:  DispatchSelectedTargetByTargetType(onActionBtnClicked.target.targetType);
                     activeHero.UseSkillOnTarget(currentSkillSelected, onActionBtnClicked.target);
                     //CombatController.Instance.OnPlayerInputPauseIPausables(false);
+                    CombatController.Instance.SetCurrentBattleState(BattleState.NORMAL_TIME_FLOW);
                 }
                 else
                 {

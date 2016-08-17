@@ -59,13 +59,25 @@ public class CombatController : MonoBehaviour {
     void OnEnable()
     {
         Messenger.AddListener<OnEnemyDie>(UpdateActiveEnemies);
+        Messenger.AddListener<OnQueuedActionExecutingNow>(OnQueuedActionExecutingNow);
     }
 
     void OnDisable()
     {
         Messenger.RemoveListener<OnEnemyDie>(UpdateActiveEnemies);
+        Messenger.RemoveListener<OnQueuedActionExecutingNow>(OnQueuedActionExecutingNow);
     }
     #endregion
+
+    void OnQueuedActionExecutingNow(OnQueuedActionExecutingNow action)
+    {
+        PauseIPausables(true);
+    }
+
+    void OnQueuedActionExecuted(OnQueuedActionExecuted action)
+    {
+        PauseIPausables(false);
+    }
 
     public void InitializeCombat(List<Enemy> activeEnemies)
     {
@@ -160,7 +172,7 @@ public class CombatController : MonoBehaviour {
         Messenger.Dispatch(dataclass);
     }
 
-    public void OnPlayerInputPauseIPausables(bool isPaused)
+    public void PauseIPausables(bool isPaused)
     {
         foreach (var v in activeHeroes) {
             v.PauseMe(isPaused);
